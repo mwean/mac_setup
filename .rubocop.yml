@@ -1,0 +1,59 @@
+require: rubocop-rspec
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 100
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/**/*'
+
+Style/SingleSpaceBeforeFirstArg:
+  Enabled: false
+
+Style/AccessorMethodName:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: true
+
+Style/MethodCalledOnDoEndBlock:
+  Enabled: true
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/TrivialAccessors:
+  ExactNameMatch: true
+
+Style/CollectionMethods:
+  Enabled: true
+
+Style/PredicateName:
+  NamePrefix:
+    - is_
+    - have_
+  NamePrefixBlacklist:
+    - is_
+    - have_
+
+Style/SignalException:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Enabled: false
+RSpec/DescribedClass:
+  Enabled: false
+RSpec/DescribeMethod:
+  Enabled: false
+RSpec/FilePath:
+  Enabled: false
+RSpec/InstanceVariable:
+  Enabled: false
