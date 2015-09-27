@@ -2,6 +2,8 @@
 
 This is a tool for setting up a new Mac and keeping it up to date. It uses Homebrew to install formulas and applications (using Homebrew casks).
 
+[![Build Status](https://img.shields.io/travis/mwean/mac_setup.svg)](https://travis-ci.org/mwean/mac_setup) [![Code Climate](https://img.shields.io/codeclimate/github/mwean/mac_setup.svg)](https://codeclimate.com/github/mwean/mac_setup) [![Coverage Status](https://img.shields.io/codeclimate/coverage/github/mwean/mac_setup.svg)](https://codeclimate.com/github/mwean/mac_setup/coverage) ![Gem Version](https://img.shields.io/gem/v/mac_setup.svg)
+
 ## Installation
 
     $ gem install mac_setup
