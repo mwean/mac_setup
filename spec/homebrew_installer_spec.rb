@@ -1,4 +1,6 @@
 describe MacSetup::HomebrewInstaller do
+  let(:options) { [] }
+
   context 'homebrew is not already installed' do
     before(:each) { FakeShell.stub(/which brew/, with: '') }
 
@@ -29,9 +31,19 @@ describe MacSetup::HomebrewInstaller do
 
       expect(/brew update/).to have_been_run
     end
+
+    context '--skip-brew-update option is passed' do
+      let(:options) { ['--skip-brew-update'] }
+
+      it 'does not update homebrew' do
+        run_installer
+
+        expect(/brew update/).not_to have_been_run
+      end
+    end
   end
 
   def run_installer
-    quiet { MacSetup::HomebrewInstaller.run }
+    quiet { MacSetup::HomebrewInstaller.run(options) }
   end
 end

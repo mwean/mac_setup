@@ -9,11 +9,11 @@ require 'mac_setup/launch_agent_installer'
 require 'mac_setup/git_repo_installer'
 
 module MacSetup
-  def self.install(config_path)
+  def self.install(config_path, options)
     config = Configuration.new(File.expand_path(config_path))
     status = SystemStatus.new
 
-    HomebrewInstaller.run
+    HomebrewInstaller.run(options)
     TapInstaller.run(config, status)
     FormulaInstaller.run(config, status)
     CaskInstaller.run(config, status)

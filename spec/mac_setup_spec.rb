@@ -1,6 +1,7 @@
 describe MacSetup do
   describe '.install' do
     let(:config_path) { 'spec/support/config.yml' }
+    let(:options) { %w(option1 option2) }
     let(:fake_config) { double(:fake_config) }
     let(:fake_status) { double(:fake_status) }
 
@@ -15,7 +16,7 @@ describe MacSetup do
       allow(MacSetup::LaunchAgentInstaller).to receive(:run)
       allow(MacSetup::GitRepoInstaller).to receive(:run)
 
-      MacSetup.install(config_path)
+      MacSetup.install(config_path, options)
     end
 
     it 'builds a configuration object with the config path' do
@@ -23,7 +24,7 @@ describe MacSetup do
     end
 
     it 'installs homebrew' do
-      expect(MacSetup::HomebrewInstaller).to have_received(:run)
+      expect(MacSetup::HomebrewInstaller).to have_received(:run).with(options)
     end
 
     it 'installs taps' do
