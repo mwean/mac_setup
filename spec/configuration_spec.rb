@@ -128,4 +128,40 @@ describe MacSetup::Configuration do
       end
     end
   end
+
+  describe '#git_repos' do
+    context 'no git_repos are included' do
+      it 'returns an empty array' do
+        expect(config.git_repos).to eq([])
+      end
+    end
+
+    context 'git_repos are included' do
+      let(:config_hash) { stringify(git_repos: git_repos) }
+
+      let(:git_repos) do
+        [
+          { 'REPO1' => 'INSTALL_PATH1' },
+          { 'REPO2' => 'INSTALL_PATH2' }
+        ]
+      end
+
+      it 'returns the included git_repos' do
+        expect(config.git_repos).to eq(git_repos)
+      end
+
+      context 'git_repos are listed more than once' do
+        let(:git_repos) do
+          [
+            { 'REPO1' => 'INSTALL_PATH1' },
+            { 'REPO1' => 'INSTALL_PATH1' }
+          ]
+        end
+
+        it 'removes duplicates' do
+          expect(config.git_repos).to eq([git_repos[0]])
+        end
+      end
+    end
+  end
 end

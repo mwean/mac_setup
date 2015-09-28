@@ -6,6 +6,7 @@ require 'mac_setup/tap_installer'
 require 'mac_setup/formula_installer'
 require 'mac_setup/cask_installer'
 require 'mac_setup/launch_agent_installer'
+require 'mac_setup/git_repo_installer'
 
 module MacSetup
   def self.install(config_path)
@@ -17,5 +18,6 @@ module MacSetup
     FormulaInstaller.run(config, status)
     CaskInstaller.run(config, status)
     LaunchAgentInstaller.run(config, status)
+    GitRepoInstaller.run(config)
   end
 end

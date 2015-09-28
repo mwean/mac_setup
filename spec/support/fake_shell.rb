@@ -11,13 +11,13 @@ class FakeShell
 
   def self.run(command)
     matching_stub = @stubs.find { |stub| command =~ stub[:pattern] }
-    @calls << command
+    @calls << { command: command, pwd: Dir.pwd }
 
     return_value(matching_stub, command)
   end
 
   def self.called?(pattern)
-    @calls.any? { |call| call =~ pattern }
+    @calls.any? { |call| call[:command] =~ pattern }
   end
 
   def self.reset!
@@ -30,5 +30,9 @@ class FakeShell
 
     return_val = matching_stub[:return_val]
     return_val.respond_to?(:call) ? return_val.call(command) : return_val.to_s
+  end
+
+  def self.pwd(pattern)
+    @calls.find { |call| call[:command] =~ pattern }[:pwd]
   end
 end

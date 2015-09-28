@@ -26,6 +26,10 @@ module MacSetup
       (@config['launch_agents'] || []).uniq
     end
 
+    def git_repos
+      (@config['git_repos'] || []).uniq
+    end
+
     private
 
     def add_cask_tap(specified_taps)
