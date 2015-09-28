@@ -1,3 +1,5 @@
+require 'fileutils'
+
 require_relative 'shell'
 
 module MacSetup

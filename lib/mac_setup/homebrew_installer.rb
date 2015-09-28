@@ -12,7 +12,7 @@ module MacSetup
         puts 'Homebrew already installed...'
       end
 
-      puts 'Updating Homebrew formulas...'
+      puts 'Updating Homebrew...'
       Shell.run('brew update')
     end
 
