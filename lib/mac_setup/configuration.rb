@@ -2,7 +2,7 @@ require 'yaml'
 
 module MacSetup
   class Configuration
-    CASK_TAP = 'caskroom/cask'
+    CASK_FORMULA = 'caskroom/cask/brew-cask'
 
     attr_reader :config
 
@@ -11,11 +11,11 @@ module MacSetup
     end
 
     def taps
-      add_cask_tap(@config['taps'] || []).uniq
+      (@config['taps'] || []).uniq
     end
 
     def formulas
-      (@config['formulas'] || []).uniq
+      add_cask(@config['formulas'] || []).uniq
     end
 
     def casks
@@ -32,8 +32,8 @@ module MacSetup
 
     private
 
-    def add_cask_tap(specified_taps)
-      casks.any? ? specified_taps << CASK_TAP : specified_taps
+    def add_cask(specified_formulas)
+      casks.any? ? specified_formulas << CASK_FORMULA : specified_formulas
     end
   end
 end

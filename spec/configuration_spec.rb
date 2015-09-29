@@ -18,14 +18,6 @@ describe MacSetup::Configuration do
       it 'returns an empty array' do
         expect(config.taps).to eq([])
       end
-
-      context 'casks are included' do
-        let(:config_hash) { stringify(casks: ['CASK1']) }
-
-        it 'includes the cask tap' do
-          expect(config.taps).to eq(['caskroom/cask'])
-        end
-      end
     end
 
     context 'taps are included' do
@@ -34,14 +26,6 @@ describe MacSetup::Configuration do
 
       it 'returns the included taps' do
         expect(config.taps).to eq(taps)
-      end
-
-      context 'casks are included' do
-        let(:config_hash) { stringify(taps: taps, casks: ['CASK1']) }
-
-        it 'includes the cask tap' do
-          expect(config.taps).to include('caskroom/cask')
-        end
       end
 
       context 'taps are listed more than once' do
@@ -59,6 +43,14 @@ describe MacSetup::Configuration do
       it 'returns an empty array' do
         expect(config.formulas).to eq([])
       end
+
+      context 'casks are included' do
+        let(:config_hash) { stringify(casks: ['CASK1']) }
+
+        it 'includes the cask formula' do
+          expect(config.formulas).to eq(['caskroom/cask/brew-cask'])
+        end
+      end
     end
 
     context 'formulas are included' do
@@ -67,6 +59,14 @@ describe MacSetup::Configuration do
 
       it 'returns the included formulas' do
         expect(config.formulas).to eq(formulas)
+      end
+
+      context 'casks are included' do
+        let(:config_hash) { stringify(formulas: formulas, casks: ['CASK1']) }
+
+        it 'includes the cask formula' do
+          expect(config.formulas).to include('caskroom/cask/brew-cask')
+        end
       end
 
       context 'formulas are listed more than once' do
