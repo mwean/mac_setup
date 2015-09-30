@@ -1,6 +1,7 @@
 require 'mac_setup/version'
 require 'mac_setup/configuration'
 require 'mac_setup/system_status'
+require 'mac_setup/command_line_tools_installer'
 require 'mac_setup/homebrew_installer'
 require 'mac_setup/tap_installer'
 require 'mac_setup/formula_installer'
@@ -13,6 +14,7 @@ module MacSetup
     config = Configuration.new(File.expand_path(config_path))
     status = SystemStatus.new
 
+    CommandLineToolsInstaller.run
     HomebrewInstaller.run(options)
     TapInstaller.run(config, status)
     FormulaInstaller.run(config, status)

@@ -9,6 +9,7 @@ describe MacSetup do
       allow(MacSetup::Configuration).to receive(:new).and_return(fake_config)
       allow(MacSetup::SystemStatus).to receive(:new).and_return(fake_status)
 
+      allow(MacSetup::CommandLineToolsInstaller).to receive(:run)
       allow(MacSetup::HomebrewInstaller).to receive(:run)
       allow(MacSetup::TapInstaller).to receive(:run)
       allow(MacSetup::FormulaInstaller).to receive(:run)
@@ -21,6 +22,10 @@ describe MacSetup do
 
     it 'builds a configuration object with the config path' do
       expect(MacSetup::Configuration).to have_received(:new).with(File.expand_path(config_path))
+    end
+
+    it 'installs the command line tools' do
+      expect(MacSetup::CommandLineToolsInstaller).to have_received(:run)
     end
 
     it 'installs homebrew' do
