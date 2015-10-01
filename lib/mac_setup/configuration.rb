@@ -30,6 +30,10 @@ module MacSetup
       (@config['git_repos'] || []).uniq
     end
 
+    def scripts
+      (@config['scripts'] || []).uniq
+    end
+
     private
 
     def add_cask(specified_formulas)

@@ -16,6 +16,7 @@ describe MacSetup do
       allow(MacSetup::CaskInstaller).to receive(:run)
       allow(MacSetup::LaunchAgentInstaller).to receive(:run)
       allow(MacSetup::GitRepoInstaller).to receive(:run)
+      allow(MacSetup::ScriptInstaller).to receive(:run)
 
       MacSetup.install(config_path, options)
     end
@@ -50,6 +51,10 @@ describe MacSetup do
 
     it 'installs git repos' do
       expect(MacSetup::GitRepoInstaller).to have_received(:run).with(fake_config)
+    end
+
+    it 'installs scripts' do
+      expect(MacSetup::ScriptInstaller).to have_received(:run).with(fake_config)
     end
   end
 end

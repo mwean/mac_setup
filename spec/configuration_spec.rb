@@ -164,4 +164,29 @@ describe MacSetup::Configuration do
       end
     end
   end
+
+  describe '#scripts' do
+    context 'no scripts are included' do
+      it 'returns an empty array' do
+        expect(config.scripts).to eq([])
+      end
+    end
+
+    context 'scripts are included' do
+      let(:config_hash) { stringify(scripts: scripts) }
+      let(:scripts) { %w(script1 script2) }
+
+      it 'returns the included scripts' do
+        expect(config.scripts).to eq(scripts)
+      end
+
+      context 'scripts are listed more than once' do
+        let(:scripts) { %w(script1 script1) }
+
+        it 'removes duplicates' do
+          expect(config.scripts).to eq([scripts[0]])
+        end
+      end
+    end
+  end
 end

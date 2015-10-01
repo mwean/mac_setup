@@ -8,6 +8,7 @@ require 'mac_setup/formula_installer'
 require 'mac_setup/cask_installer'
 require 'mac_setup/launch_agent_installer'
 require 'mac_setup/git_repo_installer'
+require 'mac_setup/script_installer'
 
 module MacSetup
   def self.install(config_path, options)
@@ -21,5 +22,6 @@ module MacSetup
     CaskInstaller.run(config, status)
     LaunchAgentInstaller.run(config, status)
     GitRepoInstaller.run(config)
+    ScriptInstaller.run(config)
   end
 end
