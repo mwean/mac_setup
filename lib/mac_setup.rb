@@ -11,11 +11,12 @@ require 'mac_setup/git_repo_installer'
 require 'mac_setup/script_installer'
 
 module MacSetup
+  DOTFILES_PATH = File.expand_path('~/.dotfiles')
+
   def self.install(config_path, options)
     config = Configuration.new(File.expand_path(config_path))
     status = SystemStatus.new
 
-    CommandLineToolsInstaller.run
     HomebrewInstaller.run(options)
     TapInstaller.run(config, status)
     FormulaInstaller.run(config, status)
@@ -23,5 +24,10 @@ module MacSetup
     LaunchAgentInstaller.run(config, status)
     GitRepoInstaller.run(config)
     ScriptInstaller.run(config)
+  end
+
+  def self.bootstrap(dotfiles_repo)
+    GitRepoInstaller.install_repo(dotfiles_repo, DOTFILES_PATH)
+    CommandLineToolsInstaller.run
   end
 end

@@ -1,4 +1,24 @@
 describe MacSetup do
+  describe '.bootstrap' do
+    let(:dotfiles_repo) { 'username/dotfiles' }
+
+    before(:each) do
+      allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
+      allow(MacSetup::CommandLineToolsInstaller).to receive(:run)
+
+      MacSetup.bootstrap(dotfiles_repo)
+    end
+
+    it 'clones the dotfiles repo' do
+      expected_args = [dotfiles_repo, MacSetup::DOTFILES_PATH]
+      expect(MacSetup::GitRepoInstaller).to have_received(:install_repo).with(*expected_args)
+    end
+
+    it 'installs the command line tools' do
+      expect(MacSetup::CommandLineToolsInstaller).to have_received(:run)
+    end
+  end
+
   describe '.install' do
     let(:config_path) { 'spec/support/config.yml' }
     let(:options) { %w(option1 option2) }
@@ -9,7 +29,7 @@ describe MacSetup do
       allow(MacSetup::Configuration).to receive(:new).and_return(fake_config)
       allow(MacSetup::SystemStatus).to receive(:new).and_return(fake_status)
 
-      allow(MacSetup::CommandLineToolsInstaller).to receive(:run)
+      allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
       allow(MacSetup::HomebrewInstaller).to receive(:run)
       allow(MacSetup::TapInstaller).to receive(:run)
       allow(MacSetup::FormulaInstaller).to receive(:run)
@@ -23,10 +43,6 @@ describe MacSetup do
 
     it 'builds a configuration object with the config path' do
       expect(MacSetup::Configuration).to have_received(:new).with(File.expand_path(config_path))
-    end
-
-    it 'installs the command line tools' do
-      expect(MacSetup::CommandLineToolsInstaller).to have_received(:run)
     end
 
     it 'installs homebrew' do
