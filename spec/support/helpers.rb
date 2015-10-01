@@ -14,6 +14,9 @@ module Helpers
       config.formulas = []
       config.casks = []
       config.launch_agents = []
+      config.git_repos = []
+      config.scripts = []
+      config.symlinks = []
     end
   end
 

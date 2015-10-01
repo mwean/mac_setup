@@ -5,6 +5,7 @@ describe MacSetup do
     before(:each) do
       allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
       allow(MacSetup::CommandLineToolsInstaller).to receive(:run)
+      allow(MacSetup::SymlinkInstaller).to receive(:install_dotfile)
 
       MacSetup.bootstrap(dotfiles_repo)
     end
@@ -16,6 +17,10 @@ describe MacSetup do
 
     it 'installs the command line tools' do
       expect(MacSetup::CommandLineToolsInstaller).to have_received(:run)
+    end
+
+    it 'installs the mac_setup dotfile symlinks' do
+      expect(MacSetup::SymlinkInstaller).to have_received(:install_dotfile).with('mac_setup')
     end
   end
 
@@ -37,6 +42,7 @@ describe MacSetup do
       allow(MacSetup::LaunchAgentInstaller).to receive(:run)
       allow(MacSetup::GitRepoInstaller).to receive(:run)
       allow(MacSetup::ScriptInstaller).to receive(:run)
+      allow(MacSetup::SymlinkInstaller).to receive(:run)
 
       MacSetup.install(config_path, options)
     end
@@ -71,6 +77,10 @@ describe MacSetup do
 
     it 'installs scripts' do
       expect(MacSetup::ScriptInstaller).to have_received(:run).with(fake_config)
+    end
+
+    it 'installs symlinks' do
+      expect(MacSetup::SymlinkInstaller).to have_received(:run)
     end
   end
 end

@@ -9,6 +9,7 @@ require 'mac_setup/cask_installer'
 require 'mac_setup/launch_agent_installer'
 require 'mac_setup/git_repo_installer'
 require 'mac_setup/script_installer'
+require 'mac_setup/symlink_installer'
 
 module MacSetup
   DOTFILES_PATH = File.expand_path('~/.dotfiles')
@@ -24,10 +25,12 @@ module MacSetup
     LaunchAgentInstaller.run(config, status)
     GitRepoInstaller.run(config)
     ScriptInstaller.run(config)
+    SymlinkInstaller.run(config)
   end
 
   def self.bootstrap(dotfiles_repo)
     GitRepoInstaller.install_repo(dotfiles_repo, DOTFILES_PATH)
     CommandLineToolsInstaller.run
+    SymlinkInstaller.install_dotfile('mac_setup')
   end
 end

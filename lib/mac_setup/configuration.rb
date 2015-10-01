@@ -34,6 +34,10 @@ module MacSetup
       (@config['scripts'] || []).uniq
     end
 
+    def symlinks
+      (@config['symlinks'] || []).uniq
+    end
+
     private
 
     def add_cask(specified_formulas)

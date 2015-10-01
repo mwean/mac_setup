@@ -189,4 +189,29 @@ describe MacSetup::Configuration do
       end
     end
   end
+
+  describe '#symlinks' do
+    context 'no symlinks are included' do
+      it 'returns an empty array' do
+        expect(config.symlinks).to eq([])
+      end
+    end
+
+    context 'symlinks are included' do
+      let(:config_hash) { stringify(symlinks: symlinks) }
+      let(:symlinks) { %w(symlink1 symlink2) }
+
+      it 'returns the included symlinks' do
+        expect(config.symlinks).to eq(symlinks)
+      end
+
+      context 'symlinks are listed more than once' do
+        let(:symlinks) { %w(symlink1 symlink1) }
+
+        it 'removes duplicates' do
+          expect(config.symlinks).to eq([symlinks[0]])
+        end
+      end
+    end
+  end
 end
