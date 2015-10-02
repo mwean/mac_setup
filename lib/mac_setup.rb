@@ -29,8 +29,17 @@ module MacSetup
   end
 
   def self.bootstrap(dotfiles_repo)
+    check_brew_install_path
+
     GitRepoInstaller.install_repo(dotfiles_repo, DOTFILES_PATH)
     CommandLineToolsInstaller.run
     SymlinkInstaller.install_dotfile('mac_setup')
+  end
+
+  def self.check_brew_install_path
+    return if Dir.exist?('/usr/local')
+
+    puts '/usr/local does not exist.'
+    puts 'Read this to fix: https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/El_Capitan_and_Homebrew.md#if-usrlocal-does-not-exist'
   end
 end
