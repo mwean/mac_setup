@@ -31,8 +31,8 @@ module MacSetup
   def self.bootstrap(dotfiles_repo)
     check_brew_install_path
 
-    GitRepoInstaller.install_repo(dotfiles_repo, DOTFILES_PATH)
     CommandLineToolsInstaller.run
+    GitRepoInstaller.install_repo(dotfiles_repo, DOTFILES_PATH)
     SymlinkInstaller.install_dotfile('mac_setup')
   end
 
