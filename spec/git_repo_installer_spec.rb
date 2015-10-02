@@ -28,7 +28,7 @@ describe MacSetup::GitRepoInstaller do
   end
 
   context 'repo already is installed' do
-    let(:install_path) { Pathname.new('spec/support/sandbox/my-repo').expand_path }
+    let(:install_path) { Pathname.new('spec/sandbox/my-repo').expand_path }
     let(:git_repos) { [{ 'username/repo' => install_path.to_s }] }
 
     before(:each) { install_path.mkpath }

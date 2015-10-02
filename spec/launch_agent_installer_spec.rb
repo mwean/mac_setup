@@ -1,7 +1,7 @@
 describe MacSetup::LaunchAgentInstaller do
   let(:config) { empty_config }
   let(:status) { instance_double(MacSetup::SystemStatus, loaded_agents: loaded_agents) }
-  let(:sandbox_path) { Pathname.new('spec/support/sandbox').expand_path }
+  let(:sandbox_path) { Pathname.new('spec/sandbox').expand_path }
   let(:opt_path) { sandbox_path.join('opt').to_s }
   let(:launch_agents_path) { sandbox_path.join('LaunchAgents').to_s }
 
