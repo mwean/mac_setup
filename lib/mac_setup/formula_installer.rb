@@ -25,7 +25,7 @@ module MacSetup
     end
 
     def install_formula(formula)
-      if status.installed_formulas.include?(formula)
+      if status.installed_formulas.include?(short_name(formula))
         upgrade_formula(formula)
       else
         print "Installing #{formula}..."
@@ -52,6 +52,10 @@ module MacSetup
 
     def full_name(formula)
       Shell.run("brew info #{formula}").split("\n")[0].split(':')[0]
+    end
+
+    def short_name(formula)
+      formula.split('/')[-1]
     end
   end
 end

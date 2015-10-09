@@ -27,10 +27,12 @@ describe MacSetup::FormulaInstaller do
     end
 
     context 'formulas are already installed' do
+      let(:installed) { formulas }
+
       let(:status) do
         instance_double(
           MacSetup::SystemStatus,
-          installed_formulas: formulas,
+          installed_formulas: installed,
           outdated_formulas: outdated
         )
       end
@@ -71,6 +73,18 @@ describe MacSetup::FormulaInstaller do
           formulas.each do |formula|
             expect(/brew upgrade #{formula}/).not_to have_been_run
           end
+        end
+      end
+
+      context 'with long formula names' do
+        let(:formulas) { ['caskroom/cask/brew-cask'] }
+        let(:installed) { ['brew-cask'] }
+        let(:outdated) { [] }
+
+        it 'correctly matches against installed formulas' do
+          run_installer
+
+          expect(/brew install #{formulas[0]}/).not_to have_been_run
         end
       end
     end
