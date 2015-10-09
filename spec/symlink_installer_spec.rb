@@ -33,10 +33,23 @@ describe MacSetup::SymlinkInstaller do
 
     it 'symlinks files specified in config' do
       config.symlinks = ['~/somewhere/symlink1']
+      source = File.join(home_path, 'somewhere/symlink1')
+      FileUtils.mkdir_p(File.dirname(source))
+      FileUtils.touch(source)
 
       run_installer
 
       expect(File.symlink?(File.join(home_path, '.symlink1'))).to be(true)
+    end
+
+    context "source doesn't exist" do
+      it 'skips the file' do
+        config.symlinks = ['~/somewhere/symlink1']
+
+        run_installer
+
+        expect(File.symlink?(File.join(home_path, '.symlink1'))).to be(false)
+      end
     end
 
     it 'does not re-link files that are already correctly linked' do
@@ -89,6 +102,22 @@ describe MacSetup::SymlinkInstaller do
 
       expect(File.symlink?("#{home_path}/.some_dir")).to be(true)
       expect(File.exist?("#{home_path}/.some_dir/some_file")).to be(true)
+    end
+
+    it 'symlinks children if the target directory already exists' do
+      source_dir = File.join(dotfiles_path, 'some_dir')
+      source = File.join(source_dir, 'some_file')
+      target_dir = File.join(home_path, '.some_dir')
+
+      FileUtils.mkdir_p(source_dir)
+      FileUtils.touch(source)
+      FileUtils.mkdir_p(target_dir)
+
+      run_installer
+
+      expect(File.symlink?("#{home_path}/.some_dir")).to be(false)
+      expect(File.directory?("#{home_path}/.some_dir")).to be(true)
+      expect(File.symlink?("#{home_path}/.some_dir/some_file")).to be(true)
     end
   end
 
