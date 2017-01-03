@@ -4,8 +4,8 @@ describe MacSetup do
 
     before(:each) do
       allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
-      allow(MacSetup::CommandLineToolsInstaller).to receive(:run)
       allow(MacSetup::SymlinkInstaller).to receive(:install_dotfile)
+      allow(MacSetup::HomebrewInstaller).to receive(:run)
 
       MacSetup.bootstrap(dotfiles_repo)
     end
@@ -15,12 +15,12 @@ describe MacSetup do
       expect(MacSetup::GitRepoInstaller).to have_received(:install_repo).with(*expected_args)
     end
 
-    it 'installs the command line tools' do
-      expect(MacSetup::CommandLineToolsInstaller).to have_received(:run)
-    end
-
     it 'installs the mac_setup dotfile symlinks' do
       expect(MacSetup::SymlinkInstaller).to have_received(:install_dotfile).with('mac_setup')
+    end
+
+    it 'installs homebrew' do
+      expect(MacSetup::HomebrewInstaller).to have_received(:run)
     end
   end
 
@@ -34,15 +34,9 @@ describe MacSetup do
       allow(MacSetup::Configuration).to receive(:new).and_return(fake_config)
       allow(MacSetup::SystemStatus).to receive(:new).and_return(fake_status)
 
-      allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
-      allow(MacSetup::HomebrewInstaller).to receive(:run)
-      allow(MacSetup::TapInstaller).to receive(:run)
-      allow(MacSetup::FormulaInstaller).to receive(:run)
-      allow(MacSetup::CaskInstaller).to receive(:run)
-      allow(MacSetup::LaunchAgentInstaller).to receive(:run)
-      allow(MacSetup::GitRepoInstaller).to receive(:run)
-      allow(MacSetup::ScriptInstaller).to receive(:run)
-      allow(MacSetup::SymlinkInstaller).to receive(:run)
+      MacSetup::INSTALLERS.each do |installer|
+        allow(installer).to receive(:run)
+      end
 
       MacSetup.install(config_path, options)
     end
@@ -51,36 +45,18 @@ describe MacSetup do
       expect(MacSetup::Configuration).to have_received(:new).with(File.expand_path(config_path))
     end
 
-    it 'installs homebrew' do
-      expect(MacSetup::HomebrewInstaller).to have_received(:run).with(options)
-    end
+    expected_installers = [
+      MacSetup::SymlinkInstaller,
+      MacSetup::BrewfileInstaller,
+      MacSetup::ServicesInstaller,
+      MacSetup::GitRepoInstaller,
+      MacSetup::ScriptInstaller
+    ]
 
-    it 'installs taps' do
-      expect(MacSetup::TapInstaller).to have_received(:run).with(fake_config, fake_status)
-    end
-
-    it 'installs formulas' do
-      expect(MacSetup::FormulaInstaller).to have_received(:run).with(fake_config, fake_status)
-    end
-
-    it 'installs casks' do
-      expect(MacSetup::CaskInstaller).to have_received(:run).with(fake_config, fake_status)
-    end
-
-    it 'installs launch agents' do
-      expect(MacSetup::LaunchAgentInstaller).to have_received(:run).with(fake_config, fake_status)
-    end
-
-    it 'installs git repos' do
-      expect(MacSetup::GitRepoInstaller).to have_received(:run).with(fake_config)
-    end
-
-    it 'installs scripts' do
-      expect(MacSetup::ScriptInstaller).to have_received(:run).with(fake_config)
-    end
-
-    it 'installs symlinks' do
-      expect(MacSetup::SymlinkInstaller).to have_received(:run)
+    expected_installers.each do |installer|
+      it "runs the #{installer}" do
+        expect(installer).to have_received(:run).with(fake_config, fake_status)
+      end
     end
   end
 end

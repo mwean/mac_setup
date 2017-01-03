@@ -7,7 +7,9 @@ module MacSetup
     end
 
     def link
-      puts "Linking #{shorten_path(source_path)} to #{shorten_path(target_path)}..."
+      short_sorce_path = MacSetup.shorten_path(source_path)
+      short_target_path = MacSetup.shorten_path(target_path)
+      puts "Linking #{short_sorce_path} to #{short_target_path}..."
 
       return unless source_exists
 
@@ -19,7 +21,8 @@ module MacSetup
     def source_exists
       File.exist?(source_path).tap do |exists|
         unless exists
-          puts "WARNING: Source doesn’t exist at #{shorten_path(source_path)}. Skipping..."
+          short_sorce_path = MacSetup.shorten_path(source_path)
+          puts "WARNING: Source doesn’t exist at #{short_sorce_path}. Skipping..."
         end
       end
     end
@@ -50,7 +53,7 @@ module MacSetup
       elsif File.directory?(source_path)
         link_children
       else
-        puts "WARNING: File already exists at #{shorten_path(target_path)}. Skipping..."
+        puts "WARNING: File already exists at #{MacSetup.shorten_path(target_path)}. Skipping..."
       end
     end
 
@@ -73,14 +76,10 @@ module MacSetup
       if existing_link == source_path
         puts "Already linked. Skipping..."
       else
-        print "Replacing existing symlink at #{shorten_path(target_path)}. "
-        puts "Originally linked to #{shorten_path(existing_link)}..."
+        print "Replacing existing symlink at #{MacSetup.shorten_path(target_path)}. "
+        puts "Originally linked to #{MacSetup.shorten_path(existing_link)}..."
         FileUtils.ln_sf(source_path, target_path)
       end
-    end
-
-    def shorten_path(path)
-      path.sub(/#{ENV['HOME']}/, '~')
     end
 
     def children
@@ -89,7 +88,7 @@ module MacSetup
   end
 
   class SymlinkInstaller
-    def self.run(config)
+    def self.run(config, _status)
       install_dotfiles
       install_symlinks(config)
     end
@@ -103,8 +102,6 @@ module MacSetup
 
     def self.install_symlinks(config)
       config.symlinks.each do |source_path|
-        file_name = File.basename(source_path)
-
         source = Symlink.new(source_path: File.expand_path(source_path))
         source.link
       end

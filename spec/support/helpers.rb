@@ -27,6 +27,10 @@ module Helpers
       end
     end
   end
+
+  def command_matching(str)
+    Regexp.new(Regexp.escape(str))
+  end
 end
 
 RSpec.configure { |config| config.include(Helpers) }

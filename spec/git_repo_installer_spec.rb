@@ -53,6 +53,6 @@ describe MacSetup::GitRepoInstaller do
   end
 
   def run_installer
-    quiet { MacSetup::GitRepoInstaller.run(config) }
+    quiet { MacSetup::GitRepoInstaller.run(config, instance_double(MacSetup::SystemStatus)) }
   end
 end

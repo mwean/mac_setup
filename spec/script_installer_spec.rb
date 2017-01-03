@@ -1,20 +1,26 @@
 describe MacSetup::ScriptInstaller do
-  let(:config) { empty_config }
+  let(:scripts) { %w(do_stuff1 do_stuff2) }
+  let(:sandbox_path) { Pathname.new("spec/sandbox").expand_path }
+  let(:scripts_path) { sandbox_path.join(described_class::SCRIPTS_PATH) }
 
-  before(:each) { config.scripts = scripts }
+  before(:each) do
+    stub_const('MacSetup::DOTFILES_PATH', sandbox_path)
 
-  context 'repos are from github' do
-    let(:scripts) { %w(do_stuff1 do_stuff2) }
+    scripts_path.mkpath
+    scripts.each { |script| FileUtils.touch(scripts_path.join(script)) }
+  end
 
-    it 'runs the given scripts' do
-      run_installer
+  after(:each) { scripts_path.rmtree }
 
-      expect(%r{#{MacSetup::DOTFILES_PATH}/mac_setup/scripts/do_stuff1}).to have_been_run
-      expect(%r{#{MacSetup::DOTFILES_PATH}/mac_setup/scripts/do_stuff2}).to have_been_run
+  it "runs the scripts in the scripts folder" do
+    run_installer
+
+    scripts.each do |script|
+      expect(scripts_path.join(script).to_s).to have_been_run
     end
   end
 
   def run_installer
-    MacSetup::ScriptInstaller.run(config)
+    MacSetup::ScriptInstaller.run(empty_config, instance_double(MacSetup::SystemStatus))
   end
 end

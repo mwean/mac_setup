@@ -2,7 +2,7 @@ require_relative 'shell'
 
 module MacSetup
   class GitRepoInstaller
-    def self.run(config)
+    def self.run(config, _status)
       repos = config.git_repos
       return if repos.none?
 

@@ -126,7 +126,7 @@ describe MacSetup::SymlinkInstaller do
       dotfiles = %w(dotfile1 dotfile2)
       dotfiles.each { |dotfile| FileUtils.touch(File.join(dotfiles_path, dotfile)) }
 
-      MacSetup::SymlinkInstaller.install_dotfile('dotfile1')
+      quiet { MacSetup::SymlinkInstaller.install_dotfile('dotfile1') }
 
       expect(File.symlink?(File.join(home_path, '.dotfile1'))).to be(true)
       expect(File.symlink?(File.join(home_path, '.dotfile2'))).to be(false)
@@ -134,6 +134,6 @@ describe MacSetup::SymlinkInstaller do
   end
 
   def run_installer
-    quiet { MacSetup::SymlinkInstaller.run(config) }
+    quiet { MacSetup::SymlinkInstaller.run(config, instance_double(MacSetup::SystemStatus)) }
   end
 end

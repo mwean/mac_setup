@@ -17,7 +17,7 @@ class FakeShell
   end
 
   def self.called?(pattern)
-    @calls.any? { |call| call[:command] =~ pattern }
+    !find_matching_call(pattern).nil?
   end
 
   def self.reset!
@@ -33,6 +33,19 @@ class FakeShell
   end
 
   def self.pwd(pattern)
-    @calls.find { |call| call[:command] =~ pattern }[:pwd]
+    find_matching_call(pattern)[:pwd]
+  end
+
+  def self.find_matching_call(pattern)
+    matcher = case pattern
+              when String
+                ->(call) { call[:command] == pattern }
+              when Regexp
+                ->(call) { call[:command] =~ pattern }
+              else
+                raise "Invalid pattern type: #{pattern.class}"
+              end
+
+    @calls.find { |call| matcher[call] }
   end
 end
