@@ -1,31 +1,31 @@
 describe MacSetup do
-  describe '.bootstrap' do
-    let(:dotfiles_repo) { 'username/dotfiles' }
+  describe ".bootstrap" do
+    let(:dotfiles_repo) { "username/dotfiles" }
 
     before(:each) do
       allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
       allow(MacSetup::SymlinkInstaller).to receive(:install_dotfile)
       allow(MacSetup::HomebrewInstaller).to receive(:run)
 
-      MacSetup.bootstrap(dotfiles_repo)
+      described_class.bootstrap(dotfiles_repo)
     end
 
-    it 'clones the dotfiles repo' do
+    it "clones the dotfiles repo" do
       expected_args = [dotfiles_repo, MacSetup::DOTFILES_PATH]
       expect(MacSetup::GitRepoInstaller).to have_received(:install_repo).with(*expected_args)
     end
 
-    it 'installs the mac_setup dotfile symlinks' do
-      expect(MacSetup::SymlinkInstaller).to have_received(:install_dotfile).with('mac_setup')
+    it "installs the mac_setup dotfile symlinks" do
+      expect(MacSetup::SymlinkInstaller).to have_received(:install_dotfile).with("mac_setup")
     end
 
-    it 'installs homebrew' do
+    it "installs homebrew" do
       expect(MacSetup::HomebrewInstaller).to have_received(:run)
     end
   end
 
-  describe '.install' do
-    let(:config_path) { 'spec/support/config.yml' }
+  describe ".install" do
+    let(:config_path) { "spec/support/config.yml" }
     let(:options) { %w(option1 option2) }
     let(:fake_config) { double(:fake_config) }
     let(:fake_status) { double(:fake_status) }
@@ -38,10 +38,10 @@ describe MacSetup do
         allow(installer).to receive(:run)
       end
 
-      MacSetup.install(config_path, options)
+      described_class.install(config_path, options)
     end
 
-    it 'builds a configuration object with the config path' do
+    it "builds a configuration object with the config path" do
       expect(MacSetup::Configuration).to have_received(:new).with(File.expand_path(config_path))
     end
 

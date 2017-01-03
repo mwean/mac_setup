@@ -1,4 +1,4 @@
-require_relative 'shell'
+require_relative "shell"
 
 module MacSetup
   class BrewfileInstaller

@@ -1,4 +1,4 @@
-require_relative 'shell'
+require_relative "shell"
 
 module MacSetup
   class GitRepoInstaller
@@ -6,7 +6,7 @@ module MacSetup
       repos = config.git_repos
       return if repos.none?
 
-      puts 'Installing Git Repos...'
+      puts "Installing Git Repos..."
 
       repos.each do |repo_and_path|
         repo, install_path = repo_and_path.to_a.flatten
@@ -22,15 +22,15 @@ module MacSetup
         print "Installing #{repo}..."
         url = expand_url(repo)
         Shell.run(%(git clone --recursive #{url} "#{install_path}"))
-        puts 'Ok'
+        puts "Ok"
       end
     end
 
     def self.update_repo(install_path)
       Dir.chdir(install_path) do
         if can_update?
-          Shell.run('git pull && git submodule update --init --recursive')
-          puts 'Ok'
+          Shell.run("git pull && git submodule update --init --recursive")
+          puts "Ok"
         else
           puts "\nCan't update. Unstaged changes in #{install_path}"
         end
@@ -38,7 +38,7 @@ module MacSetup
     end
 
     def self.can_update?
-      Shell.run('git status --porcelain').empty?
+      Shell.run("git status --porcelain").empty?
     end
 
     def self.expand_url(repo)

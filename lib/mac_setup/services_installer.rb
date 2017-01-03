@@ -1,10 +1,10 @@
-require 'fileutils'
+require "fileutils"
 
-require_relative 'shell'
+require_relative "shell"
 
 module MacSetup
   class ServicesInstaller
-    LAUNCH_AGENTS_PATH = File.expand_path('~/Library/LaunchAgents')
+    LAUNCH_AGENTS_PATH = File.expand_path("~/Library/LaunchAgents")
     SERVICES_TAP = "homebrew/services"
 
     attr_reader :config, :status, :services, :running_services
@@ -22,7 +22,7 @@ module MacSetup
     def run
       return if services.none?
 
-      puts 'Installing services...'
+      puts "Installing services..."
 
       FileUtils.mkdir_p(LAUNCH_AGENTS_PATH)
       tap_services

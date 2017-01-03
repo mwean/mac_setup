@@ -1,16 +1,16 @@
 #!/usr/bin/env ruby
 
-require 'mac_setup'
+require "mac_setup"
 
-DEFAULT_CONFIG_PATH = '~/.mac_setup/config.yml'
+DEFAULT_CONFIG_PATH = "~/.mac_setup/config.yml"
 
 command = ARGV.shift
-options = ARGV.select { |arg| arg.start_with?('--') }
+options = ARGV.select { |arg| arg.start_with?("--") }
 
 case command
-when 'bootstrap'
+when "bootstrap"
   MacSetup.bootstrap(ARGV[0])
-when 'install'
+when "install"
   config_path = (ARGV - options)[0] || File.expand_path(DEFAULT_CONFIG_PATH)
 
   if File.exist?(config_path)

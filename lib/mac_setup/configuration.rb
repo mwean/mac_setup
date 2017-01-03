@@ -1,4 +1,4 @@
-require 'yaml'
+require "yaml"
 
 module MacSetup
   class Configuration
@@ -9,15 +9,15 @@ module MacSetup
     end
 
     def services
-      (@config['services'] || []).uniq
+      (@config["services"] || []).uniq
     end
 
     def git_repos
-      (@config['git_repos'] || []).uniq
+      (@config["git_repos"] || []).uniq
     end
 
     def symlinks
-      (@config['symlinks'] || []).uniq
+      (@config["symlinks"] || []).uniq
     end
   end
 end

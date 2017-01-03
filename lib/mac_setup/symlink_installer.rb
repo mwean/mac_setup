@@ -40,7 +40,7 @@ module MacSetup
     end
 
     def target_path
-      @target_path ||= File.join(ENV['HOME'], ".#{file_name}")
+      @target_path ||= File.join(ENV["HOME"], ".#{file_name}")
     end
 
     def file_name
@@ -83,7 +83,7 @@ module MacSetup
     end
 
     def children
-      Dir.entries(source_path).reject { |entry| entry.start_with?('.') }
+      Dir.entries(source_path).reject { |entry| entry.start_with?(".") }
     end
   end
 
@@ -115,7 +115,7 @@ module MacSetup
     end
 
     def self.dotfiles
-      Dir.entries(DOTFILES_PATH).reject { |entry| entry.start_with?('.') }
+      Dir.entries(DOTFILES_PATH).reject { |entry| entry.start_with?(".") }
     end
   end
 end

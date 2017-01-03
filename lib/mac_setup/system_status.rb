@@ -1,4 +1,4 @@
-require_relative 'shell'
+require_relative "shell"
 
 module MacSetup
   class SystemStatus
@@ -9,7 +9,7 @@ module MacSetup
     private
 
     def get_taps
-      Shell.run('brew tap').split("\n")
+      Shell.run("brew tap").split("\n")
     end
   end
 end

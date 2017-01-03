@@ -4,7 +4,7 @@ describe MacSetup::ScriptInstaller do
   let(:scripts_path) { sandbox_path.join(described_class::SCRIPTS_PATH) }
 
   before(:each) do
-    stub_const('MacSetup::DOTFILES_PATH', sandbox_path)
+    stub_const("MacSetup::DOTFILES_PATH", sandbox_path)
 
     scripts_path.mkpath
     scripts.each { |script| FileUtils.touch(scripts_path.join(script)) }

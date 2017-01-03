@@ -1,11 +1,11 @@
 describe MacSetup::ServicesInstaller do
   let(:config) { empty_config }
   let(:status) { instance_double(MacSetup::SystemStatus, installed_taps: ["homebrew/services"]) }
-  let(:sandbox_path) { Pathname.new('spec/sandbox').expand_path }
-  let(:launch_agents_path) { sandbox_path.join('LaunchAgents').to_s }
+  let(:sandbox_path) { Pathname.new("spec/sandbox").expand_path }
+  let(:launch_agents_path) { sandbox_path.join("LaunchAgents").to_s }
 
   before(:each) do
-    stub_const('MacSetup::ServicesInstaller::LAUNCH_AGENTS_PATH', launch_agents_path)
+    stub_const("MacSetup::ServicesInstaller::LAUNCH_AGENTS_PATH", launch_agents_path)
     FakeShell.stub(/brew services list/, with: services_list(service_statuses))
 
     config.services = services
@@ -13,11 +13,11 @@ describe MacSetup::ServicesInstaller do
 
   after(:each) { FileUtils.rm_rf(launch_agents_path) }
 
-  context 'no services are specified' do
+  context "no services are specified" do
     let(:services) { [] }
     let(:service_statuses) { {} }
 
-    it 'does not create the LaunchAgents directory' do
+    it "does not create the LaunchAgents directory" do
       FileUtils.rmdir(launch_agents_path)
 
       run_installer
@@ -26,11 +26,11 @@ describe MacSetup::ServicesInstaller do
     end
   end
 
-  context 'services are specified' do
+  context "services are specified" do
     let(:services) { %w(service1 service2) }
     let(:service_statuses) { {} }
 
-    it 'creates the LaunchAgents directory' do
+    it "creates the LaunchAgents directory" do
       FileUtils.rmdir(launch_agents_path)
 
       run_installer
@@ -38,7 +38,7 @@ describe MacSetup::ServicesInstaller do
       expect(Pathname.new(launch_agents_path)).to exist
     end
 
-    it 'starts the services' do
+    it "starts the services" do
       run_installer
 
       services.each do |service|
@@ -46,10 +46,10 @@ describe MacSetup::ServicesInstaller do
       end
     end
 
-    context 'a service is already started' do
+    context "a service is already started" do
       let(:service_statuses) { { service2: :started } }
 
-      it 'restarts the service' do
+      it "restarts the service" do
         run_installer
 
         expect("brew services start service1").to have_been_run
@@ -57,10 +57,10 @@ describe MacSetup::ServicesInstaller do
       end
     end
 
-    context 'a service is loaded but not started' do
+    context "a service is loaded but not started" do
       let(:service_statuses) { { service2: :stopped } }
 
-      it 'restarts the service' do
+      it "restarts the service" do
         run_installer
 
         expect("brew services start service1").to have_been_run
