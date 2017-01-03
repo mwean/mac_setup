@@ -4,6 +4,7 @@ describe MacSetup do
 
     before(:each) do
       allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
+      allow(MacSetup::CommandLineToolsInstaller).to receive(:run)
       allow(MacSetup::SymlinkInstaller).to receive(:install_dotfile)
       allow(MacSetup::HomebrewInstaller).to receive(:run)
 
@@ -13,6 +14,10 @@ describe MacSetup do
     it "clones the dotfiles repo" do
       expected_args = [dotfiles_repo, MacSetup::DOTFILES_PATH]
       expect(MacSetup::GitRepoInstaller).to have_received(:install_repo).with(*expected_args)
+    end
+
+    it "installs the command line tools" do
+      expect(MacSetup::CommandLineToolsInstaller).to have_received(:run)
     end
 
     it "installs the mac_setup dotfile symlinks" do

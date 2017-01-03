@@ -1,0 +1,9 @@
+Software Update Tool
+Copyright 2002-2012 Apple Inc.
+
+Finding available software
+Software Update found the following new or updated software:
+   * Command Line Tools (OS X 10.10) for Xcode-7.0
+  Command Line Tools (OS X 10.10) for Xcode (7.0), 158010K [recommended]
+   * OSXUpd10.10.5-10.10.5
+  OS X Update (10.10.5), 795798K [recommended] [restart]
