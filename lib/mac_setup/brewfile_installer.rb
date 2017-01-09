@@ -19,6 +19,7 @@ module MacSetup
       tap_bundle
       sign_in_to_mas
       install_brewfile
+      install_openssl
     end
 
     private
@@ -37,6 +38,11 @@ module MacSetup
 
     def install_brewfile
       Shell.run("brew bundle --global")
+    end
+
+    def install_openssl
+      # Needed for encrypted files
+      Shell.run("brew install openssl")
     end
 
     def bundle_already_tapped?

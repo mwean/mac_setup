@@ -18,6 +18,8 @@ when "install"
   else
     puts "You must specify a path to config file or create one at #{DEFAULT_CONFIG_PATH}"
   end
+when "encrypt"
+  MacSetup.encrypt
 else
   puts "Unknown command: #{command}"
 end

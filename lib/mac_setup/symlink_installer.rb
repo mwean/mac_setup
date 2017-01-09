@@ -3,10 +3,12 @@ module MacSetup
     def initialize(options)
       @source_path = options[:source_path]
       @file_name = options[:name]
-      @target_path = options[:target_path]
+      @target_path = sanitize_target(options[:target_path])
     end
 
     def link
+      return if Secrets.encrypted?(source_path)
+
       short_sorce_path = MacSetup.shorten_path(source_path)
       short_target_path = MacSetup.shorten_path(target_path)
       puts "Linking #{short_sorce_path} to #{short_target_path}..."
@@ -31,16 +33,12 @@ module MacSetup
       File.exist?(target_path)
     end
 
-    def target
-      @target ||= SymlinkTarget.new(target_path)
-    end
-
     def source_path
       @source_path ||= File.expand_path(file_name, DOTFILES_PATH)
     end
 
     def target_path
-      @target_path ||= File.join(ENV["HOME"], ".#{file_name}")
+      @target_path ||= File.join(ENV["HOME"], ".#{sanitize_target(file_name)}")
     end
 
     def file_name
@@ -84,6 +82,10 @@ module MacSetup
 
     def children
       Dir.entries(source_path).reject { |entry| entry.start_with?(".") }
+    end
+
+    def sanitize_target(file)
+      Secrets.strip_extension(file)
     end
   end
 
