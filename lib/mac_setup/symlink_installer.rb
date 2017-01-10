@@ -11,7 +11,7 @@ module MacSetup
 
       short_sorce_path = MacSetup.shorten_path(source_path)
       short_target_path = MacSetup.shorten_path(target_path)
-      puts "Linking #{short_sorce_path} to #{short_target_path}..."
+      MacSetup.log "Linking #{short_sorce_path} to #{short_target_path}..."
 
       return unless source_exists
 
@@ -24,7 +24,7 @@ module MacSetup
       File.exist?(source_path).tap do |exists|
         unless exists
           short_sorce_path = MacSetup.shorten_path(source_path)
-          puts "WARNING: Source doesn’t exist at #{short_sorce_path}. Skipping..."
+          MacSetup.log "WARNING: Source doesn’t exist at #{short_sorce_path}. Skipping."
         end
       end
     end
@@ -51,12 +51,12 @@ module MacSetup
       elsif File.directory?(source_path)
         link_children
       else
-        puts "WARNING: File already exists at #{MacSetup.shorten_path(target_path)}. Skipping..."
+        MacSetup.log "WARNING: File already exists at #{MacSetup.shorten_path(target_path)}. Skipping."
       end
     end
 
     def link_children
-      puts "Linking children..."
+      MacSetup.log "Linking children..."
 
       children.each do |child|
         child_source = Symlink.new(
@@ -72,7 +72,7 @@ module MacSetup
       existing_link = File.readlink(target_path)
 
       if existing_link == source_path
-        puts "Already linked. Skipping..."
+        MacSetup.log "Already linked. Skipping."
       else
         print "Replacing existing symlink at #{MacSetup.shorten_path(target_path)}. "
         puts "Originally linked to #{MacSetup.shorten_path(existing_link)}..."
@@ -91,7 +91,6 @@ module MacSetup
 
   class SymlinkInstaller
     def self.run(config, _status)
-      Secrets.decrypt(DOTFILES_PATH)
       install_dotfiles
       install_symlinks(config)
     end

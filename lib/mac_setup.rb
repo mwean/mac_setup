@@ -9,15 +9,17 @@ require "mac_setup/script_installer"
 require "mac_setup/symlink_installer"
 require "mac_setup/brewfile_installer"
 require "mac_setup/services_installer"
+require "mac_setup/secrets_installer"
 
 module MacSetup
   DOTFILES_PATH = File.expand_path("~/.dotfiles")
 
   INSTALLERS = [
     GitRepoInstaller,
+    SecretsInstaller,
+    SymlinkInstaller,
     BrewfileInstaller,
     ServicesInstaller,
-    SymlinkInstaller,
     ScriptInstaller
   ]
 
@@ -25,6 +27,8 @@ module MacSetup
     config = Configuration.new(File.expand_path(config_path))
     status = SystemStatus.new
 
+    GitRepoInstaller.install_repo(config.dotfiles_repo, DOTFILES_PATH)
+    config.reload!
     INSTALLERS.each { |installer| installer.run(config, status) }
   end
 
@@ -40,5 +44,15 @@ module MacSetup
 
   def self.shorten_path(path)
     path.sub(/#{ENV['HOME']}/, "~")
+  end
+
+  def self.log(message)
+    if block_given?
+      print "#{message}..."
+      yield
+      puts "Ok."
+    else
+      puts message
+    end
   end
 end
