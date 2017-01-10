@@ -91,6 +91,7 @@ module MacSetup
 
   class SymlinkInstaller
     def self.run(config, _status)
+      Secrets.decrypt(DOTFILES_PATH)
       install_dotfiles
       install_symlinks(config)
     end

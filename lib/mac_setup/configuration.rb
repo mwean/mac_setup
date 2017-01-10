@@ -13,7 +13,7 @@ module MacSetup
     end
 
     def git_repos
-      (@config["git_repos"] || []).uniq
+      ((@config["git_repos"] || []) + [@config["repo"]]).uniq
     end
 
     def symlinks

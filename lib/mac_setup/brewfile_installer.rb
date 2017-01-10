@@ -17,7 +17,7 @@ module MacSetup
 
     def run
       tap_bundle
-      sign_in_to_mas
+      set_up_mas
       install_brewfile
       install_openssl
     end
@@ -30,14 +30,34 @@ module MacSetup
       Shell.run("brew tap #{BUNDLE_TAP}")
     end
 
-    def sign_in_to_mas
+    def set_up_mas
+      brewfile = Pathname.new("~/.Brewfile").expand_path
       return unless brewfile.read =~ /^mas /
+
+      install_mas
+      sign_in_to_mas
+    end
+
+    def install_mas
+      Shell.run("brew install mas") unless mas_installed?
+    end
+
+    def sign_in_to_mas
+      return if mas_signed_in?
       apple_id = Shell.ask("What is your Apple ID?")
       Shell.run("mas signin --dialog #{apple_id}")
     end
 
+    def mas_signed_in?
+      Shell.success?("mas account")
+    end
+
     def install_brewfile
       Shell.run("brew bundle --global")
+    end
+
+    def mas_installed?
+      Shell.success?("which mas")
     end
 
     def install_openssl

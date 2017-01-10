@@ -24,7 +24,6 @@ module MacSetup
   def self.install(config_path, _options)
     config = Configuration.new(File.expand_path(config_path))
     status = SystemStatus.new
-    Secrets.decrypt(DOTFILES_PATH)
 
     INSTALLERS.each { |installer| installer.run(config, status) }
   end
