@@ -21,7 +21,7 @@ module MacSetup
     def self.strip_extension(file)
       return file unless file.to_s.end_with?(PLAINTEXT_EXT)
 
-      file.sub(/#{PLAINTEXT_EXT}$/, "")
+      file.sub(/\.#{PLAINTEXT_EXT}$/, "")
     end
 
     def initialize(dir)

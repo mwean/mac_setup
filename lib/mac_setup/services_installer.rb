@@ -22,7 +22,7 @@ module MacSetup
     def run
       return if services.none?
 
-      puts "Installing services..."
+      MacSetup.log "Installing services..."
 
       FileUtils.mkdir_p(LAUNCH_AGENTS_PATH)
       tap_services
@@ -44,11 +44,11 @@ module MacSetup
 
     def install_service(service)
       if running_services.include?(service)
-        puts "Restarting #{service} service..."
+        MacSetup.log "Restarting #{service} service..."
 
         Shell.run("brew services restart #{service}")
       else
-        puts "Installing #{service} service..."
+        MacSetup.log "Installing #{service} service..."
 
         Shell.run("brew services start #{service}")
       end

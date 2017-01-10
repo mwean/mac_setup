@@ -6,12 +6,13 @@ module MacSetup
 
     def self.run
       if homebrew_missing?
-        puts "Installing Homebrew..."
-        Shell.run(%{/usr/bin/ruby -e "$(curl -fsSL #{BREW_INSTALL_URL})"})
+        MacSetup.log "Installing Homebrew" do
+          Shell.run(%{/usr/bin/ruby -e "$(curl -fsSL #{BREW_INSTALL_URL})"})
+        end
       else
-        puts "Homebrew already installed. Updating..."
-
-        Shell.run("brew update")
+        MacSetup.log "Homebrew already installed. Updating" do
+          Shell.run("brew update")
+        end
       end
     end
 

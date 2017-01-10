@@ -1,3 +1,4 @@
+require "pathname"
 require_relative "shell"
 
 module MacSetup
@@ -19,7 +20,6 @@ module MacSetup
       tap_bundle
       set_up_mas
       install_brewfile
-      install_openssl
     end
 
     private
@@ -39,13 +39,22 @@ module MacSetup
     end
 
     def install_mas
-      Shell.run("brew install mas") unless mas_installed?
+      if mas_installed?
+        MacSetup.log "mas already installed. Skipping."
+      else
+        MacSetup.log "Installing mas" do
+          Shell.run("brew install mas")
+        end
+      end
     end
 
     def sign_in_to_mas
-      return if mas_signed_in?
-      apple_id = Shell.ask("What is your Apple ID?")
-      Shell.run("mas signin --dialog #{apple_id}")
+      if mas_signed_in?
+        MacSetup.log "Already signed into Mac App Store. Skipping."
+      else
+        apple_id = Shell.ask("What is your Apple ID?")
+        Shell.run("mas signin --dialog #{apple_id}")
+      end
     end
 
     def mas_signed_in?
@@ -53,16 +62,13 @@ module MacSetup
     end
 
     def install_brewfile
-      Shell.run("brew bundle --global")
+      MacSetup.log "Installing Brewfile" do
+        Shell.run("brew bundle --global")
+      end
     end
 
     def mas_installed?
       Shell.success?("which mas")
-    end
-
-    def install_openssl
-      # Needed for encrypted files
-      Shell.run("brew install openssl")
     end
 
     def bundle_already_tapped?
