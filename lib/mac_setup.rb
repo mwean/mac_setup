@@ -27,7 +27,7 @@ module MacSetup
     config = Configuration.new(File.expand_path(config_path))
     status = SystemStatus.new
 
-    GitRepoInstaller.install_repo(config.dotfiles_repo, DOTFILES_PATH)
+    GitRepoInstaller.install_repo(config.dotfiles_repo, DOTFILES_PATH, status: status, track: :dotfiles)
     config.reload!
     INSTALLERS.each { |installer| installer.run(config, status) }
   end

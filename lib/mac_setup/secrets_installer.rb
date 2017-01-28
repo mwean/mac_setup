@@ -9,13 +9,12 @@ module MacSetup
     end
 
     def run
-      install_openssl
-      Secrets.decrypt(DOTFILES_PATH)
+      install_crypto
+      Secrets.decrypt(@status.git_changes(:dotfiles))
     end
 
-    def install_openssl
-      # Needed for encrypted files
-      Shell.run("brew install openssl") unless @status.installed_formulas.include?("openssl")
+    def install_crypto
+      Shell.run("brew install #{SECRETS::CRYPTO_LIB}") unless @status.installed_formulas.include?(CRYPTO_LIB)
     end
   end
 end

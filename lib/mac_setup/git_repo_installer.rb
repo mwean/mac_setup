@@ -2,6 +2,8 @@ require_relative "shell"
 
 module MacSetup
   class GitRepoInstaller
+    attr_reader :repo, :install_path, :tracking_key, :status
+
     def self.run(config, _status)
       repos = config.git_repos
       return if repos.none?
@@ -10,39 +12,76 @@ module MacSetup
 
       repos.each do |repo_and_path|
         repo, install_path = repo_and_path.to_a.flatten
-        install_repo(repo, File.expand_path(install_path))
+        new(repo, File.expand_path(install_path)).install_or_update
       end
     end
 
-    def self.install_repo(repo, install_path)
+    def self.install_repo(repo, install_path, tracking_key: nil, status: nil)
+      new(repo, install_path, tracking_key: tracking_key, status: status).install_or_update
+    end
+
+    def initialize(repo, install_path, tracking_key: nil, status: nil)
+      @repo         = repo
+      @install_path = install_path
+      @tracking_key = tracking_key
+      @status       = status
+    end
+
+    def install_or_update
       if Dir.exist?(install_path)
-        MacSetup.log "#{repo} Already Installed. Updating" do
-          update_repo(install_path)
-        end
+        MacSetup.log("#{repo} Already Installed. Updating") { update }
       else
-        MacSetup.log "Installing #{repo}" do
-          url = expand_url(repo)
-          Shell.run(%(git clone --recursive #{url} "#{install_path}"))
-        end
+        MacSetup.log("Installing #{repo}") { install }
       end
     end
 
-    def self.update_repo(install_path)
-      Dir.chdir(install_path) do
-        if can_update?
-          Shell.run("git pull && git submodule update --init --recursive")
-        else
-          puts "\nCan't update. Unstaged changes in #{install_path}"
-          exit 1
-        end
+    private
+
+    def install
+      clone_repo
+      track_install
+    end
+
+    def update
+      unless can_update?
+        puts "\nCan't update. Unstaged changes in #{install_path}"
+        return
+      end
+
+      in_install_path do
+        Shell.run("git fetch")
+        track_update
+        Shell.run("git merge origin && git submodule update --init --recursive")
       end
     end
 
-    def self.can_update?
+    def clone_repo
+      Shell.run(%(git clone --recursive #{repo_url} "#{install_path}"))
+    end
+
+    def can_update?
       Shell.run("git status --porcelain").empty?
     end
 
-    def self.expand_url(repo)
+    def track_install
+      return unless tracking_key
+
+      in_install_path do
+        status.git_changes(tracking_key, Shell.run("git ls-files").split("\n"))
+      end
+    end
+
+    def track_update
+      return unless tracking_key
+
+      status.git_changes(tracking_key, Shell.run("git diff --name-only origin").split("\n"))
+    end
+
+    def in_install_path
+      Dir.chdir(install_path) { yield }
+    end
+
+    def repo_url
       repo =~ %r{^[^/]+/[^/]+$} ? "https://github.com/#{repo}.git" : repo
     end
   end

@@ -1,17 +1,18 @@
 module MacSetup
   class Secrets
+    CRYPTO_LIB = "openssl"
     CIPHER = "aes-256-cbc"
     PLAINTEXT_EXT = "priv"
     CIPHERTEXT_EXT = "crypt"
 
-    attr_reader :dir
+    attr_reader :files, :password
 
-    def self.encrypt(dir)
-      new(dir).encrypt
+    def self.encrypt(dir_or_files)
+      new(filter_files(dir_or_files, PLAINTEXT_EXT)).encrypt
     end
 
-    def self.decrypt(dir)
-      new(dir).decrypt
+    def self.decrypt(dir_or_files)
+      new(filter_files(dir_or_files, CIPHERTEXT_EXT)).decrypt
     end
 
     def self.encrypted?(file)
@@ -24,50 +25,117 @@ module MacSetup
       file.sub(/\.#{PLAINTEXT_EXT}$/, "")
     end
 
-    def initialize(dir)
-      @dir = File.expand_path(dir)
+    def self.filter_files(dir_or_files, extension)
+      if dir_or_files.is_a?(Array)
+        dir_or_files.select { |file| file.to_s.end_with?(extension) }
+      else
+        Dir.glob("#{File.expand_path(dir_or_files)}/**/*.#{extension}")
+      end
+    end
+
+    def initialize(files)
+      @files = files
     end
 
     def encrypt
-      puts "Encrypting files:"
-      files = Dir.glob("#{dir}/**/*.#{PLAINTEXT_EXT}")
-      do_crypt(files, from: PLAINTEXT_EXT, to: CIPHERTEXT_EXT, overwrite: true)
+      do_crypt("encrypt") { encrypt_files }
     end
 
     def decrypt
-      puts "Decrypting files:"
-      files = Dir.glob("#{dir}/**/*.#{CIPHERTEXT_EXT}")
-
-      do_crypt(files, from: CIPHERTEXT_EXT, to: PLAINTEXT_EXT, args: "-d") do |command|
-        unless Shell.success?(command + %W(-in #{files.first}))
-          puts "Wrong password!"
-          exit 1
-        end
+      if files.any?
+        MacSetup.log "Decrypting files:"
+      else
+        MacSetup.log "No files to decrypt. Skipping"
       end
+
+      list_files
+      get_password
+      decrypt_files
     end
 
     private
 
-    def do_crypt(files, options)
-      old_ext = options.fetch(:from)
-      new_ext = options.fetch(:to)
-      overwrite = options.fetch(:overwrite, false)
-      args = Array(options.fetch(:args, []))
-
-      files.each { |file| puts " - #{file}" }
-      command = base_command(Shell.password) + args
-
-      yield command if block_given?
-
-      files.each do |file|
-        target_path = file.sub(/#{old_ext}$/, new_ext)
-        next if !overwrite && File.exist?(target_path)
-        Shell.run(command + %W(-in #{file} -out #{target_path}))
+    def do_crypt(type)
+      if files.any?
+        MacSetup.log "#{titleized(type)}ing files:"
+        list_files
+        get_password
+        yield
+      else
+        MacSetup.log "No files to #{type}. Skipping"
       end
     end
 
+    def titleized(str)
+      char, rest = str.split("", 2)
+      char.upcase + rest
+    end
+
+    def list_files
+      files.each { |file| puts "  #{MacSetup.shorten_path(file)}" }
+    end
+
+    def get_password
+      @password = Shell.password
+    end
+
+    def encrypt_files
+      files.each do |file|
+        target_path = file.sub(/#{PLAINTEXT_EXT}$/, CIPHERTEXT_EXT)
+        do_encrypt(file, target_path)
+      end
+    end
+
+    def decrypt_files
+      if password_correct?
+        do_decrypt
+      else
+        puts "Wrong Password!"
+        get_password
+        decrypt_files
+      end
+    end
+
+    def password_correct?
+      Shell.success?(decrypt_command(files.first, files.first.sub(/#{CIPHERTEXT_EXT}$/, PLAINTEXT_EXT)))
+    end
+
+    def do_decrypt
+      files.each { |file| decrypt_file(file) }
+    end
+
+    def decrypt_file(file, log: true)
+      target_path = file.sub(/#{CIPHERTEXT_EXT}$/, PLAINTEXT_EXT)
+      command = -> { Shell.run(decrypt_command(file, target_path)) }
+
+      if log
+        MacSetup.log "Decrypting #{raw_file_path(file)}", &command
+      else
+        command.call
+      end
+    end
+
+    def do_encrypt(file, target_path)
+      MacSetup.log "Encrypting #{raw_file_path(file)}" do
+        Shell.run(encrypt_command(file, target_path))
+      end
+    end
+
+    def encrypt_command(file, target_path)
+      %W(openssl enc -aes-256-cbc -k testme -in #{file} -out #{target_path})
+    end
+
+    def decrypt_command(file, target_path)
+      %W(openssl enc -aes-256-cbc -k testme -d -in #{file} -out #{target_path})
+    end
+
     def base_command(password)
-      %W(openssl enc -#{CIPHER} -k #{password})
+      %W(#{CRYPTO_LIB} enc -#{CIPHER} -k #{password})
+    end
+
+    def raw_file_path(file)
+      raw_file = file.sub(/\.#{CIPHERTEXT_EXT}|#{PLAINTEXT_EXT}$/, "")
+      MacSetup.shorten_path(raw_file)
     end
   end
 end

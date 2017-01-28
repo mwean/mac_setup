@@ -2,12 +2,24 @@ require_relative "shell"
 
 module MacSetup
   class SystemStatus
+    def initialize
+      @git_changes = Hash.new { |hash, key| hash[key] = [] }
+    end
+
     def installed_taps
       @installed_taps ||= get_taps
     end
 
     def installed_formulas
       @installed_formulas ||= get_formulas
+    end
+
+    def git_changes(key, changes = nil)
+      if changes
+        @git_changes[key] = changes
+      else
+        @git_changes[key]
+      end
     end
 
     private
