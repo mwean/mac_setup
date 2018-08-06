@@ -16,8 +16,8 @@ module MacSetup
       end
     end
 
-    def self.install_repo(repo, install_path, tracking_key: nil, status: nil)
-      new(repo, install_path, tracking_key: tracking_key, status: status).install_or_update
+    def self.install_repo(repo, install_path, track: nil, status: nil)
+      new(repo, install_path, tracking_key: track, status: status).install_or_update
     end
 
     def initialize(repo, install_path, tracking_key: nil, status: nil)
@@ -44,7 +44,7 @@ module MacSetup
 
     def update
       unless can_update?
-        puts "\nCan't update. Unstaged changes in #{install_path}"
+        MacSetup.log "Can't update. Unstaged changes in #{install_path}"
         return
       end
 

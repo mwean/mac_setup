@@ -2,22 +2,21 @@
 
 require "mac_setup"
 
-DEFAULT_CONFIG_PATH = "~/.dotfiles/mac_setup/config.yml"
-
 command = ARGV.shift
 options = ARGV.select { |arg| arg.start_with?("--") }
+config_path = (ARGV - options).first || File.expand_path(DEFAULT_CONFIG_PATH)
 
 case command
 when "bootstrap"
-  MacSetup.bootstrap(ARGV[0])
+  MacSetup.bootstrap(ARGV.take(2))
 when "install"
-  config_path = (ARGV - options)[0] || File.expand_path(DEFAULT_CONFIG_PATH)
+  # config_path = (ARGV - options)[0] || File.expand_path(DEFAULT_CONFIG_PATH)
 
-  if File.exist?(config_path)
-    MacSetup.install(config_path, options)
-  else
-    puts "You must specify a path to config file or create one at #{DEFAULT_CONFIG_PATH}"
-  end
+  # if File.exist?(config_path)
+    MacSetup.install # (config_path, options)
+  # else
+  #   puts "You must specify a path to config file or create one at #{DEFAULT_CONFIG_PATH}"
+  # end
 when "encrypt"
   MacSetup.encrypt
 else
