@@ -8,9 +8,11 @@ require "mac_setup/homebrew_runner"
 require "mac_setup/secrets"
 require "mac_setup/homebrew_installer"
 require "mac_setup/git_repo_installer"
+require "mac_setup/symlink_installer"
 require "mac_setup/plugin"
 require "mac_setup/plugins/keybase"
 require "mac_setup/plugins/mac_app_store"
+require "mac_setup/plugins/dotfiles"
 
 module MacSetup
   DEFAULT_DOTFILES_PATH = File.expand_path("~/.dotfiles")
@@ -24,7 +26,8 @@ module MacSetup
 
   DEFAULT_PLUGINS = [
     Plugins::MacAppStore,
-    Plugins::Keybase
+    Plugins::Keybase,
+    Plugins::Dotfiles
   ]
 
   class << self
@@ -55,7 +58,7 @@ module MacSetup
     end
 
     def shorten_path(path)
-      path.sub(/#{ENV['HOME']}/, "~")
+      path.to_s.sub(/#{ENV['HOME']}/, "~")
     end
 
     def log(message)

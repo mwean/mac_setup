@@ -1,17 +1,20 @@
 module MacSetup
   class Plugin
-    def self.add_requirements(_config)
-    end
+    class << self
+      def add_requirements(_config)
+      end
 
-    def self.run(_config, _status)
-    end
+      def run(_config, _status)
+      end
 
-    def self.load(plugin_name)
+      def load(_plugin_name)
+      end
 
-    end
+      def get_status(_status)
+      end
 
-    def self.bootstrap
-
+      def bootstrap
+      end
     end
   end
 end

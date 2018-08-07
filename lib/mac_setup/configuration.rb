@@ -4,7 +4,7 @@ require "set"
 module MacSetup
   class Configuration
     InvalidConfigError = Class.new(StandardError)
-    DEFAULT_KEYS = [:plugins, :git_repos, :symlinks, :brews, :fonts, :casks, :quicklook, :mas]
+    DEFAULT_KEYS = [:repo, :plugins, :git_repos, :symlinks, :brews, :fonts, :casks, :quicklook, :mas]
 
     def initialize(config_path)
       @config_path = config_path
@@ -32,7 +32,7 @@ module MacSetup
         when Set
           collection << value.to_s
         when Hash
-          collection.merge(value) do |key, oldval, newval|
+          collection.merge!(value) do |key, oldval, newval|
             raise InvalidConfigError, "#{key} is defined twice!: #{oldval}, #{newval}"
           end
         end
@@ -44,11 +44,11 @@ module MacSetup
     end
 
     def validate!
-      extra_keys = @config.keys.map(&:to_i) - allowed_keys
+      extra_keys = @config.keys.map(&:to_sym) - allowed_keys.to_a
 
       return if extra_keys.none?
 
-      raise InvalidConfigError, "Extra keys in config: #{extra_keys.join(", ")}"
+      raise InvalidConfigError, "Extra keys in config: #{extra_keys.join(', ')}"
     end
 
     def dotfiles_repo
@@ -64,7 +64,7 @@ module MacSetup
     end
 
     def brews
-      @brews ||= (@config["brews"] || []).reduce({}) do |merged, item|
+      @brews ||= (@config["brews"] || []).each_with_object({}) do |item, merged|
         add_brews(item, merged)
       end
     end
@@ -88,7 +88,7 @@ module MacSetup
     private
 
     def add_brews(item, existing_brews = brews)
-      existing_brews.merge(brew_value(item)) do |key, oldval, newval|
+      existing_brews.merge!(brew_value(item)) do |key, oldval, newval|
         raise InvalidConfigError, "#{key} is defined twice!: #{oldval}, #{newval}"
       end
     end

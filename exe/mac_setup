@@ -3,8 +3,8 @@
 require "mac_setup"
 
 command = ARGV.shift
-options = ARGV.select { |arg| arg.start_with?("--") }
-config_path = (ARGV - options).first || File.expand_path(DEFAULT_CONFIG_PATH)
+# options = ARGV.select { |arg| arg.start_with?("--") }
+# config_path = (ARGV - options).first || File.expand_path(DEFAULT_CONFIG_PATH)
 
 case command
 when "bootstrap"

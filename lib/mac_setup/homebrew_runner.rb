@@ -12,6 +12,10 @@ module MacSetup
       Shell.run(cmd.join("\n"))
     end
 
+    def self.install_brew(formula)
+      Shell.run("brew install #{formula}")
+    end
+
     def self.install_cask(cask)
       Shell.run("brew cask install #{cask}")
     end

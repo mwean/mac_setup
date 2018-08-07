@@ -1,3 +1,5 @@
+require "fileutils"
+
 module MacSetup
   class Symlink
     def initialize(options)
@@ -91,33 +93,45 @@ module MacSetup
 
   class SymlinkInstaller
     def self.run(config, _status)
-      install_dotfiles
       install_symlinks(config)
     end
 
-    def self.install_dotfiles
-      dotfiles.each do |file_name|
-        source = Symlink.new(name: file_name)
-        source.link
-      end
-    end
-
     def self.install_symlinks(config)
-      config.symlinks.each do |source_path|
-        source = Symlink.new(source_path: File.expand_path(source_path))
-        source.link
+      config.symlinks.each do |source_path, target_path|
+        # source = Symlink.new(source_path: File.expand_path(source_path))
+        # source.link
+        source = Pathname.new(source_path)
+        short_source_path = source.to_s
+        # MacSetup.shorten_path(source_path)
+
+        unless source.exist?
+          MacSetup.log "#{short_source_path} doesn't exist. Skipping."
+          next
+        end
+
+        target = Pathname.new(target_path)
+        short_target_path = target.to_s
+        source = source.expand_path
+        target = target.expand_path
+        # MacSetup.shorten_path(target_path)
+
+        MacSetup.log "Linking #{short_sorce_path} to #{short_target_path}..."
+
+        home = Pathname.new(ENV.fetch("HOME"))
+
+        if target.directory?
+          filename = target == home ? ".#{source.basename}" : source.basename
+          full_target = target.join(filename)
+          File.symlink(source, full_target)
+        elsif target.to_s.end_with?("/")
+          target.mkpath
+          full_target = target.join(source.basename)
+          File.symlink(source, full_target)
+        else
+          target.dirname.mkpath
+          File.symlink(source, target)
+        end
       end
-    end
-
-    def self.install_dotfile(name)
-      dotfile = dotfiles.find { |file| file =~ /#{Regexp.escape(name)}/ }
-      source = Symlink.new(name: dotfile)
-
-      source.link
-    end
-
-    def self.dotfiles
-      Dir.entries(DOTFILES_PATH).reject { |entry| entry.start_with?(".") }
     end
   end
 end
