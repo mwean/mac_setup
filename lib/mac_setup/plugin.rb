@@ -13,7 +13,7 @@ module MacSetup
       def get_status(_status)
       end
 
-      def bootstrap
+      def bootstrap(config)
       end
     end
   end

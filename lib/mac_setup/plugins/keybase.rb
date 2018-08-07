@@ -22,11 +22,14 @@ module MacSetup
         end
 
         def log_in(username)
-          Shell.run("keybase login #{username}")
+          # Using backticks doesn't work with the keybase login process
+          Shell.raw("keybase login #{username}")
         end
 
         # TODO: Investigate making this work with kext permissions
         def install_volume
+          Shell.run("keybase install --components=fuse")
+          Shell.ask("Allow the extension in system preferences")
           Shell.run("keybase install --components=helper,fuse,mountdir,kbfs")
         end
 

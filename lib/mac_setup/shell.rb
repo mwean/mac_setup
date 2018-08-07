@@ -8,9 +8,13 @@ module MacSetup
         `#{sanitize_command(command)}`
       end
 
+      def raw(command)
+        system(command)
+      end
+
       def ask(question)
         puts question
-        gets.strip
+        STDIN.gets.strip
       end
 
       def password

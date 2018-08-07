@@ -8,7 +8,7 @@ command = ARGV.shift
 
 case command
 when "bootstrap"
-  MacSetup.bootstrap(ARGV.take(2))
+  MacSetup.bootstrap(ARGV.first)
 when "install"
   # config_path = (ARGV - options)[0] || File.expand_path(DEFAULT_CONFIG_PATH)
 

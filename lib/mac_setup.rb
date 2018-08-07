@@ -8,6 +8,7 @@ require "mac_setup/homebrew_runner"
 require "mac_setup/secrets"
 require "mac_setup/homebrew_installer"
 require "mac_setup/git_repo_installer"
+require "mac_setup/symlink_path_builder"
 require "mac_setup/symlink_installer"
 require "mac_setup/plugin"
 require "mac_setup/plugins/keybase"
@@ -32,8 +33,8 @@ module MacSetup
 
   class << self
     def bootstrap(dotfiles_repo)
-      GitRepoInstaller.install_repo(dotfiles_repo, dotfiles_path)
       HomebrewInstaller.run
+      GitRepoInstaller.install_repo(dotfiles_repo, dotfiles_path)
 
       config = Configuration.new(DEFAULT_CONFIG_PATH)
 
