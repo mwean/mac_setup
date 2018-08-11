@@ -11,9 +11,9 @@ module MacSetup
     def link
       return if Secrets.encrypted?(source_path)
 
-      short_sorce_path = MacSetup.shorten_path(source_path)
+      short_source_path = MacSetup.shorten_path(source_path)
       short_target_path = MacSetup.shorten_path(target_path)
-      MacSetup.log "Linking #{short_sorce_path} to #{short_target_path}..."
+      MacSetup.log "Linking #{short_source_path} to #{short_target_path}..."
 
       return unless source_exists
 
@@ -25,8 +25,8 @@ module MacSetup
     def source_exists
       File.exist?(source_path).tap do |exists|
         unless exists
-          short_sorce_path = MacSetup.shorten_path(source_path)
-          MacSetup.log "WARNING: Source doesn’t exist at #{short_sorce_path}. Skipping."
+          short_source_path = MacSetup.shorten_path(source_path)
+          MacSetup.log "WARNING: Source doesn’t exist at #{short_source_path}. Skipping."
         end
       end
     end
@@ -100,37 +100,53 @@ module MacSetup
       config.symlinks.each do |source_path, target_path|
         # source = Symlink.new(source_path: File.expand_path(source_path))
         # source.link
-        source = Pathname.new(source_path)
-        short_source_path = source.to_s
-        # MacSetup.shorten_path(source_path)
+        source = Pathname.new(source_path).expand_path
+        short_source_path = MacSetup.shorten_path(source.to_s)
 
         unless source.exist?
           MacSetup.log "#{short_source_path} doesn't exist. Skipping."
           next
         end
 
-        target = Pathname.new(target_path)
-        short_target_path = target.to_s
-        source = source.expand_path
-        target = target.expand_path
-        # MacSetup.shorten_path(target_path)
+        target = Pathname.new(target_path).expand_path
+        short_target_path = MacSetup.shorten_path(target.to_s)
 
-        MacSetup.log "Linking #{short_sorce_path} to #{short_target_path}..."
+        MacSetup.log "Linking #{short_source_path} to #{short_target_path}..."
 
         home = Pathname.new(ENV.fetch("HOME"))
 
         if target.directory?
           filename = target == home ? ".#{source.basename}" : source.basename
           full_target = target.join(filename)
-          File.symlink(source, full_target)
+          link(source, full_target)
         elsif target.to_s.end_with?("/")
           target.mkpath
           full_target = target.join(source.basename)
-          File.symlink(source, full_target)
+          link(source, full_target)
         else
           target.dirname.mkpath
-          File.symlink(source, target)
+          link(source, target)
         end
+      end
+    end
+
+    def self.link(source, target)
+      if File.exist?(target)
+        if File.symlink?(target)
+          existing_link = File.readlink(target)
+
+          if existing_link == source.to_s
+            MacSetup.log "Already linked. Skipping."
+          else
+            print "Replacing existing symlink at #{MacSetup.shorten_path(target)}. "
+            puts "Originally linked to #{MacSetup.shorten_path(existing_link)}..."
+            FileUtils.ln_sf(source, target)
+          end
+        else
+          MacSetup.log "WARNING: File already exists at #{MacSetup.shorten_path(target)}. Skipping."
+        end
+      else
+        FileUtils.ln_s(source, target)
       end
     end
   end

@@ -1,15 +1,17 @@
+require "tempfile"
+
 module MacSetup
   class HomebrewRunner
     def self.run(config, _status)
-      brewfile = build_brewfile(config)
+      MacSetup.log("Installing Homebrew brews and casks") do
+        Tempfile.create("Brewfile") do |brewfile|
+          write_brewfile(config, brewfile)
+          File.chmod(0644, brewfile)
+          brewfile.rewind
 
-      cmd = [
-        "echo << EOF | brew bundle install --file=-",
-        brewfile,
-        "EOF"
-      ]
-
-      Shell.run(cmd.join("\n"))
+          Shell.raw("brew bundle install --file=#{brewfile.path}")
+        end
+      end
     end
 
     def self.install_brew(formula)
@@ -20,16 +22,18 @@ module MacSetup
       Shell.run("brew cask install #{cask}")
     end
 
-    def self.build_brewfile(config)
+    def self.write_brewfile(config, brewfile)
+      taps = config.taps.map { |parts| %(tap #{quote_args(parts)}) }
+
       brews = config.brews.map do |name, opts|
         [%(brew "#{name}"), print_args(opts)].compact.join(", ")
       end
 
       casks = (config.fonts + config.casks + config.quicklook).map do |name|
-        "cask #{name}"
+        %(cask "#{name}")
       end
 
-      (brews + casks).join("\n")
+      brewfile.write((taps + brews + casks).join("\n"))
     end
 
     def self.print_args(opts)
@@ -37,8 +41,11 @@ module MacSetup
 
       return unless args
 
-      args_str = args.sort.map { |arg| %("#{arg}") }.join(", ")
-      "args: [#{args_str}]"
+      "args: [#{quote_args(args.sort)}]"
+    end
+
+    def self.quote_args(args)
+      args.map { |arg| %("#{arg}") }.join(", ")
     end
   end
 end

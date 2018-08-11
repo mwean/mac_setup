@@ -9,7 +9,7 @@ module MacSetup
         MacSetup.log "Homebrew already installed. Skipping..."
       else
         MacSetup.log "Installing Homebrew" do
-          Shell.run(%{/usr/bin/ruby -e "$(curl -fsSL #{BREW_INSTALL_URL})"})
+          Shell.raw(%{/usr/bin/ruby -e "$(curl -fsSL #{BREW_INSTALL_URL})"})
         end
       end
     end

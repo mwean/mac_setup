@@ -26,7 +26,7 @@ module MacSetup
       end
 
       def relative_path(path, base, replacement = "~/")
-        path.to_s.sub(%r{^#{base}\/}, replacement)
+        path.to_s.sub(%r{^#{Regexp.escape(base.to_s)}\/}, replacement)
       end
     end
   end

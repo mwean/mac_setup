@@ -38,17 +38,20 @@ module MacSetup
     private
 
     def install
-      clone_repo
-      track_install
+      in_install_path do
+        clone_repo
+        track_install
+      end
     end
 
     def update
-      unless can_update?
-        MacSetup.log "Can't update. Unstaged changes in #{install_path}"
-        return
-      end
-
       in_install_path do
+        unless can_update?
+          MacSetup.log "Can't update. Unstaged changes in #{install_path}"
+          MacSetup.log Shell.run("git status --porcelain")
+          return
+        end
+
         Shell.run("git fetch")
         track_update
         Shell.run("git merge origin && git submodule update --init --recursive")
@@ -66,9 +69,7 @@ module MacSetup
     def track_install
       return unless tracking_key
 
-      in_install_path do
-        status.git_changes(tracking_key, Shell.run("git ls-files").split("\n"))
-      end
+      status.git_changes(tracking_key, Shell.run("git ls-files").split("\n"))
     end
 
     def track_update

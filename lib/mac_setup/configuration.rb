@@ -4,7 +4,7 @@ require "set"
 module MacSetup
   class Configuration
     InvalidConfigError = Class.new(StandardError)
-    DEFAULT_KEYS = [:repo, :plugins, :git_repos, :symlinks, :brews, :fonts, :casks, :quicklook, :mas]
+    DEFAULT_KEYS = [:repo, :plugins, :git_repos, :symlinks, :taps, :brews, :fonts, :casks, :quicklook, :mas]
 
     def initialize(config_path)
       @config_path = config_path
@@ -61,6 +61,10 @@ module MacSetup
 
     def symlinks
       @symlinks ||= @config["symlinks"] || {}
+    end
+
+    def taps
+      @taps ||= (@config["taps"] || []).map { |item| item.split(/\s+/) }.to_set
     end
 
     def brews

@@ -29,14 +29,15 @@ module MacSetup
         # TODO: Investigate making this work with kext permissions
         def install_volume
           Shell.run("keybase install --components=fuse")
-          Shell.ask("Allow the extension in system preferences")
+          Shell.ask("Allow the extension in system preferences and then hit Return")
           Shell.run("keybase install --components=helper,fuse,mountdir,kbfs")
         end
 
         def add_private_dotfiles(config)
-          dotfiles_dir = Pathname.new("/keybase/private/#{config.keybase}/dotfiles")
+          keybase_dir = Dir.entries("/Volumes").find { |dir| dir.start_with?("Keybase") }
+          dotfiles_dir = "/Volumes/#{keybase_dir}/private/#{config.keybase}/dotfiles"
 
-          return unless dotfiles_dir.exist?
+          return unless Dir.exist?(dotfiles_dir)
 
           SymlinkPathBuilder.paths_for(dotfiles_dir) do |source, target|
             config.add(:symlinks, source => target)
