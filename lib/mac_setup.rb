@@ -17,6 +17,7 @@ require "mac_setup/plugin"
 require "mac_setup/plugins/keybase"
 require "mac_setup/plugins/mac_app_store"
 require "mac_setup/plugins/dotfiles"
+require "mac_setup/plugins/asdf"
 
 module MacSetup
   DEFAULT_DOTFILES_PATH = File.expand_path("~/.dotfiles")
@@ -33,7 +34,8 @@ module MacSetup
   DEFAULT_PLUGINS = [
     Plugins::MacAppStore,
     Plugins::Keybase,
-    Plugins::Dotfiles
+    Plugins::Dotfiles,
+    Plugins::Asdf
   ]
 
   class << self
