@@ -38,10 +38,8 @@ module MacSetup
     private
 
     def install
-      in_install_path do
-        clone_repo
-        track_install
-      end
+      clone_repo
+      track_install
     end
 
     def update
@@ -69,7 +67,9 @@ module MacSetup
     def track_install
       return unless tracking_key
 
-      status.git_changes(tracking_key, Shell.run("git ls-files").split("\n"))
+      in_install_path do
+        status.git_changes(tracking_key, Shell.run("git ls-files").split("\n"))
+      end
     end
 
     def track_update
