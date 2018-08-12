@@ -1,11 +1,16 @@
 require "shellwords"
 require "io/console"
+require "open3"
 
 module MacSetup
   class Shell
     class << self
+      def result(command)
+        run(command).output
+      end
+
       def run(command)
-        `#{sanitize_command(command)}`
+        Result.new(*Open3.capture3(command))
       end
 
       def raw(command)
@@ -23,7 +28,7 @@ module MacSetup
       end
 
       def success?(command)
-        system(sanitize_command(command))
+        run(command).success?
       end
 
       def command_present?(command)

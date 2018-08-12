@@ -58,7 +58,7 @@ module MacSetup
     def set_value(domain, key, value)
       puts "Setting #{domain} #{key} to #{value}"
       qualified_value = qualify_value(value)
-      Shell.run("defaults write #{domain} #{key} #{qualified_value}")
+      Shell.run(%(defaults write #{domain} "#{key}" #{qualified_value}))
     end
 
     def extract_array_values(string)
@@ -74,10 +74,10 @@ module MacSetup
       when TrueClass, FalseClass
         "-bool #{value}"
       when Array
-        values = value.map { |val| %("#{val}") }.join(" ")
+        values = value.map { |val| "'#{val}'" }.join(" ")
         "-array #{values}"
       when String
-        %(-string "#{value}")
+        "-string '#{value}'"
       end
     end
   end

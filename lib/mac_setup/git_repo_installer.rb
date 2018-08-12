@@ -46,7 +46,7 @@ module MacSetup
       in_install_path do
         unless can_update?
           MacSetup.log "Can't update. Unstaged changes in #{install_path}"
-          MacSetup.log Shell.run("git status --porcelain")
+          MacSetup.log Shell.result("git status --porcelain")
           return
         end
 
@@ -61,21 +61,21 @@ module MacSetup
     end
 
     def can_update?
-      Shell.run("git status --porcelain").empty?
+      Shell.result("git status --porcelain").empty?
     end
 
     def track_install
       return unless tracking_key
 
       in_install_path do
-        status.git_changes(tracking_key, Shell.run("git ls-files").split("\n"))
+        status.git_changes(tracking_key, Shell.result("git ls-files").split("\n"))
       end
     end
 
     def track_update
       return unless tracking_key
 
-      status.git_changes(tracking_key, Shell.run("git diff --name-only origin").split("\n"))
+      status.git_changes(tracking_key, Shell.result("git diff --name-only origin").split("\n"))
     end
 
     def in_install_path
