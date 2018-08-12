@@ -10,6 +10,8 @@ require "mac_setup/homebrew_installer"
 require "mac_setup/git_repo_installer"
 require "mac_setup/symlink_path_builder"
 require "mac_setup/symlink_installer"
+require "mac_setup/script_installer"
+require "mac_setup/defaults_installer"
 require "mac_setup/plugin"
 require "mac_setup/plugins/keybase"
 require "mac_setup/plugins/mac_app_store"
@@ -22,7 +24,9 @@ module MacSetup
   INSTALLERS = [
     GitRepoInstaller,
     SymlinkInstaller,
-    HomebrewRunner
+    HomebrewRunner,
+    ScriptInstaller,
+    DefaultsInstaller
   ]
 
   DEFAULT_PLUGINS = [
@@ -46,12 +50,15 @@ module MacSetup
 
       GitRepoInstaller.install_repo(config.dotfiles_repo, dotfiles_path)
 
+      Shell.raw("brew update")
+
       config = Configuration.new(DEFAULT_CONFIG_PATH)
       plugins(config).each { |plugin| plugin.add_requirements(config) }
       config.validate!
       status = SystemStatus.new
 
       INSTALLERS.each { |installer| installer.run(config, status) }
+      plugins(config).each { |plugin| plugin.run(config, status) }
     end
 
     def encrypt

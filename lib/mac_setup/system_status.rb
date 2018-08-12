@@ -4,6 +4,7 @@ module MacSetup
   class SystemStatus
     def initialize
       @git_changes = Hash.new { |hash, key| hash[key] = [] }
+      @defaults = Hash.new { |hash, key| hash[key] = {} }
     end
 
     def installed_taps
@@ -22,6 +23,10 @@ module MacSetup
       end
     end
 
+    def defaults_value(domain, key)
+      @defaults[domain][key] ||= read_defaults_value(domain, key)
+    end
+
     private
 
     def get_taps
@@ -30,6 +35,12 @@ module MacSetup
 
     def get_formulas
       Shell.run("brew list -1").split("\n")
+    end
+
+    def read_defaults_value(domain, key)
+      result = Shell.run("defaults read #{domain} #{key}")
+
+      result unless result =~ /The domain.*does not exist/
     end
   end
 end
