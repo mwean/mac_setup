@@ -5,12 +5,12 @@ require "open3"
 module MacSetup
   class Shell
     class << self
-      def result(command)
-        run(command).output
+      def result(*command)
+        run(*command).output
       end
 
-      def run(command)
-        Result.new(*Open3.capture3(command))
+      def run(*command)
+        Result.new(*Open3.capture3(*command))
       end
 
       def raw(command)

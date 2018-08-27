@@ -10,8 +10,7 @@ module MacSetup
 
       MacSetup.log "Installing Git Repos..."
 
-      repos.each do |repo_and_path|
-        repo, install_path = repo_and_path.to_a.flatten
+      repos.each do |repo, install_path|
         new(repo, File.expand_path(install_path)).install_or_update
       end
     end

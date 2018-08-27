@@ -93,7 +93,11 @@ module MacSetup
 
     def add_brews(item, existing_brews = brews)
       existing_brews.merge!(brew_value(item)) do |key, oldval, newval|
-        raise InvalidConfigError, "#{key} is defined twice!: #{oldval}, #{newval}"
+        if oldval == newval
+          oldval
+        else
+          raise InvalidConfigError, "#{key} is defined twice!: #{oldval}, #{newval}"
+        end
       end
     end
 

@@ -11,7 +11,7 @@ module MacSetup
     end
 
     def output
-      [@stderr, @stdout].join("\n")
+      [@stderr, @stdout].join("\n").strip
     end
   end
 end

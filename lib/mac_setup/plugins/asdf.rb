@@ -18,7 +18,7 @@ module MacSetup
 
         def install_missing_plugins(config)
           (config.asdf - installed_plugins).each do |plugin|
-            Shell.run("asdf plugin-add", plugin)
+            Shell.run("asdf", "plugin-add", plugin)
           end
         end
 
@@ -28,12 +28,12 @@ module MacSetup
           tool_versions.each do |line|
             plugin, version = line.split(" ")
 
-            Shell.run("asdf install", plugin, version)
+            Shell.run("asdf", "install", plugin, version)
           end
         end
 
         def installed_plugins
-          @installed_plugins ||= Shell.result("asdf plugin-list").split("\n")
+          @installed_plugins ||= Shell.result("asdf", "plugin-list").split("\n")
         end
       end
     end

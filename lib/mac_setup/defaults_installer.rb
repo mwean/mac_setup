@@ -4,10 +4,10 @@ module MacSetup
       defaults_file = File.join(MacSetup.dotfiles_path, "mac_setup/defaults.yml")
 
       if File.exist?(defaults_file)
-        puts "Setting defaults..."
+        MacSetup.log "Setting defaults..."
         new(defaults_file, config, status).run
       else
-        puts "No config file at #{MacSetup.shorten_path(defaults_file)}. Skipping..."
+        MacSetup.log "No config file at #{MacSetup.shorten_path(defaults_file)}. Skipping..."
       end
     end
 
@@ -19,7 +19,7 @@ module MacSetup
 
     def run
       @defaults.each do |domain, values|
-        puts "Setting defaults for domain #{domain}..."
+        MacSetup.log "Setting defaults for domain #{domain}..."
         set_defaults(domain, values)
       end
     end
@@ -31,8 +31,9 @@ module MacSetup
         existing_value = @status.defaults_value(domain, key)
 
         if values_equal?(existing_value, value)
-          puts "Value for #{domain} #{key} is already set. Skipping..."
+          MacSetup.log "Value for #{domain} #{key} is already set. Skipping..."
         else
+          MacSetup.log "Changing #{existing_value} to #{value}"
           set_value(domain, key, value)
         end
       end
@@ -48,17 +49,21 @@ module MacSetup
         existing.to_f == desired
       when Array
         extract_array_values(existing) == desired
-      when TrueClass, FalseClass
-        existing == desired.to_s
+      when TrueClass
+        existing == "1"
+      when FalseClass
+        existing == "0"
       when String
         existing == desired
       end
     end
 
     def set_value(domain, key, value)
-      puts "Setting #{domain} #{key} to #{value}"
+      MacSetup.log "Setting #{domain} #{key} to #{value}"
       qualified_value = qualify_value(value)
-      Shell.run(%(defaults write #{domain} "#{key}" #{qualified_value}))
+
+      sudo = "sudo " if domain.start_with?("/")
+      Shell.run(%(#{sudo}defaults write #{domain} "#{key}" #{qualified_value}))
     end
 
     def extract_array_values(string)
