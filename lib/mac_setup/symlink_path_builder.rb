@@ -1,13 +1,13 @@
 module MacSetup
   class SymlinkPathBuilder
-    HOME = ENV.fetch("HOME").freeze
+    HOME = (ENV.fetch("HOME") + "/").freeze
 
     class << self
       def paths_for(root_dir)
         root = Pathname.new(root_dir)
 
         each_child(root) do |child|
-          yield [relative_path(child, HOME), relative_path(child, root, "~/.")]
+          yield [child.to_s, rewrite_path(child, root)]
         end
       end
 
@@ -25,8 +25,10 @@ module MacSetup
         end
       end
 
-      def relative_path(path, base, replacement = "~/")
-        path.to_s.sub(%r{^#{Regexp.escape(base.to_s)}\/}, replacement)
+      def rewrite_path(path, base)
+        first_part, rest = path.to_s.split(%r{^#{Regexp.escape(base.to_s)}/([^/]+)}).drop(1)
+        parts = Dir.exist?(HOME + first_part) ? [HOME, first_part, rest] : [HOME, ".", first_part, rest]
+        parts.join
       end
     end
   end
