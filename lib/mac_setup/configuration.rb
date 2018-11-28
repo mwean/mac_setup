@@ -4,7 +4,9 @@ require "set"
 module MacSetup
   class Configuration
     InvalidConfigError = Class.new(StandardError)
-    DEFAULT_KEYS = [:repo, :plugins, :git_repos, :symlinks, :taps, :brews, :fonts, :casks, :quicklook, :mas]
+    DEFAULT_KEYS = [
+      :repo, :plugins, :git_repos, :symlinks, :taps, :brews, :fonts, :casks, :quicklook, :mas, :extra_dotfiles
+    ]
 
     def initialize(config_path)
       @config_path = config_path
@@ -53,6 +55,10 @@ module MacSetup
 
     def dotfiles_repo
       @config.fetch("repo")
+    end
+
+    def extra_dotfiles
+      @config.fetch("extra_dotfiles", [])
     end
 
     def git_repos

@@ -51,8 +51,6 @@ module MacSetup
     def install # (config_path, _options)
       config = Configuration.new(DEFAULT_CONFIG_PATH)
 
-      GitRepoInstaller.install_repo(config.dotfiles_repo, dotfiles_path)
-
       Shell.raw("brew update")
 
       config = Configuration.new(DEFAULT_CONFIG_PATH)
