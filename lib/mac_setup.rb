@@ -29,14 +29,14 @@ module MacSetup
     HomebrewRunner,
     ScriptInstaller,
     DefaultsInstaller
-  ]
+  ].freeze
 
   DEFAULT_PLUGINS = [
     Plugins::MacAppStore,
     Plugins::Keybase,
     Plugins::Dotfiles,
     Plugins::Asdf
-  ]
+  ].freeze
 
   class << self
     def bootstrap(dotfiles_repo)
@@ -48,7 +48,7 @@ module MacSetup
       plugins(config).each { |plugin| plugin.bootstrap(config) }
     end
 
-    def install # (config_path, _options)
+    def install
       config = Configuration.new(DEFAULT_CONFIG_PATH)
 
       Shell.raw("brew update")

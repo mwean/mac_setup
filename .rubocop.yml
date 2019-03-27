@@ -1,15 +1,16 @@
+inherit_from: .rubocop_todo.yml
+
 require: rubocop-rspec
 
 AllCops:
   DisplayCopNames: true
 
+Layout/SpaceBeforeFirstArg:
+  Enabled: false
+
 ## Style
 
 Style/Documentation:
-  Enabled: false
-Style/SingleSpaceBeforeFirstArg:
-  Enabled: false
-Style/AccessorMethodName:
   Enabled: false
 Style/SymbolArray:
   Enabled: false
@@ -30,31 +31,36 @@ Style/CollectionMethods:
 Style/TrivialAccessors:
   ExactNameMatch: true
 
-Style/PredicateName:
-  NamePrefix:
-    - is_
-    - have_
-  NamePrefixBlacklist:
-    - is_
-    - have_
-
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
 ## Metrics
 
 Metrics/LineLength:
-  Max: 100
+  Max: 120
   Exclude:
     - 'spec/**/*'
 
 Metrics/MethodLength:
-  Max: 15
   Exclude:
     - 'spec/**/*'
 
 Metrics/CyclomaticComplexity:
   Max: 10
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Naming/AccessorMethodName:
+  Enabled: false
+Naming/PredicateName:
+  NamePrefix:
+    - is_
+    - have_
+  NamePrefixBlacklist:
+    - is_
+    - have_
 
 ## RSpec
 
@@ -67,4 +73,12 @@ RSpec/DescribeMethod:
 RSpec/FilePath:
   Enabled: false
 RSpec/InstanceVariable:
+  Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/ContextWording:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/ExpectActual:
   Enabled: false

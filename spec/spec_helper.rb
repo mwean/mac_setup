@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 
 require "mac_setup"
 
@@ -11,7 +11,7 @@ RSpec.configure do |config|
     c.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
-  config.before(:each) do
+  config.before do
     FakeShell.reset!
     stub_const("MacSetup::Shell", FakeShell)
   end

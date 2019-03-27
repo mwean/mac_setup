@@ -20,7 +20,7 @@ module MacSetup
           if child.directory?
             each_child(child, &block)
           else
-            block.call(child)
+            yield(child)
           end
         end
       end

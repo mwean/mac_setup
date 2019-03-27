@@ -5,7 +5,7 @@ require_relative "shell"
 module MacSetup
   class ServicesInstaller
     LAUNCH_AGENTS_PATH = File.expand_path("~/Library/LaunchAgents")
-    SERVICES_TAP = "homebrew/services"
+    SERVICES_TAP = "homebrew/services".freeze
 
     attr_reader :config, :status, :services, :running_services
 

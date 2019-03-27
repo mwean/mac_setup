@@ -5,11 +5,11 @@ class FakeShell
 
   class << self
     def stub(pattern, options = {}, &block)
-      if block_given?
-        return_val = block
-      else
-        return_val = options[:with] || ""
-      end
+      return_val = if block_given?
+                     block
+                   else
+                     options[:with] || ""
+                   end
 
       @stubs.unshift(pattern: pattern, return_val: return_val)
     end
@@ -27,7 +27,6 @@ class FakeShell
     end
 
     def raw(command)
-      matching_stub = @stubs.find { |stub| command =~ stub[:pattern] }
       @calls << { command: command, pwd: Dir.pwd }
       nil
     end

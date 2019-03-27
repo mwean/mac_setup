@@ -2,7 +2,7 @@ require_relative "shell"
 
 module MacSetup
   class CommandLineToolsInstaller
-    BIN_PATH = "/Library/Developer/CommandLineTools/usr/bin/clang"
+    BIN_PATH = "/Library/Developer/CommandLineTools/usr/bin/clang".freeze
 
     def self.run
       if File.exist?(BIN_PATH)

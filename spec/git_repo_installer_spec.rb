@@ -1,7 +1,7 @@
 describe MacSetup::GitRepoInstaller do
   let(:config) { empty_config }
 
-  before(:each) { config.git_repos = git_repos }
+  before { config.git_repos = git_repos }
 
   context "repos are from github" do
     let(:git_repos) { { "username/repo" => "some/install/path" } }
@@ -31,8 +31,9 @@ describe MacSetup::GitRepoInstaller do
     let(:install_path) { Pathname.new("spec/sandbox/my-repo").expand_path }
     let(:git_repos) { { "username/repo" => install_path.to_s } }
 
-    before(:each) { install_path.mkpath }
-    after(:each) { FileUtils.rmdir(install_path) }
+    before { install_path.mkpath }
+
+    after { FileUtils.rmdir(install_path) }
 
     it "updates the repo" do
       run_installer
