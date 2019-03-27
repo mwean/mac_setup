@@ -8,7 +8,7 @@ describe MacSetup::HomebrewInstaller do
   end
 
   context "homebrew is already installed" do
-    before(:each) { FakeShell.command_present!("brew") }
+    before { FakeShell.command_present!("brew") }
 
     it "does not install homebrew" do
       run_installer

@@ -6,7 +6,7 @@ describe MacSetup do
   describe ".bootstrap" do
     let(:dotfiles_repo) { "username/dotfiles" }
 
-    before(:each) do
+    before do
       allow(MacSetup::HomebrewInstaller).to receive(:run)
       allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
 
@@ -23,7 +23,7 @@ describe MacSetup do
     end
 
     it "clones the dotfiles repo" do
-      expected_args = [dotfiles_repo, MacSetup.dotfiles_path]
+      expected_args = [dotfiles_repo, described_class.dotfiles_path]
       expect(MacSetup::GitRepoInstaller).to have_received(:install_repo).with(*expected_args)
     end
 
@@ -36,7 +36,7 @@ describe MacSetup do
     let(:config_path) { "spec/support/config.yml" }
     let(:fake_status) { instance_double(MacSetup::SystemStatus) }
 
-    before(:each) do
+    before do
       allow(MacSetup::SystemStatus).to receive(:new).and_return(fake_status)
       allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
       allow(MacSetup::Plugins::Dotfiles).to receive(:add_requirements)
@@ -65,9 +65,7 @@ describe MacSetup do
     ]
 
     it "runs the installers" do
-      expected_installers.each do |installer|
-        expect(installer).to have_received(:run).with(fake_config, fake_status)
-      end
+      expect(expected_installers).to all(have_received(:run).with(fake_config, fake_status))
     end
   end
 end

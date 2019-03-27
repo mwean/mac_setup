@@ -1,16 +1,16 @@
 describe MacSetup::ScriptInstaller do
-  let(:scripts) { %w(do_stuff1 do_stuff2) }
+  let(:scripts) { %w[do_stuff1 do_stuff2] }
   let(:sandbox_path) { Pathname.new("spec/sandbox").expand_path }
   let(:scripts_path) { sandbox_path.join(described_class::SCRIPTS_PATH) }
 
-  before(:each) do
+  before do
     allow(MacSetup).to receive(:dotfiles_path).and_return(sandbox_path)
 
     scripts_path.mkpath
     scripts.each { |script| FileUtils.touch(scripts_path.join(script)) }
   end
 
-  after(:each) { scripts_path.rmtree }
+  after { scripts_path.rmtree }
 
   it "runs the scripts in the scripts folder" do
     run_installer

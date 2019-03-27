@@ -3,7 +3,7 @@ describe MacSetup::Configuration do
   let(:config_hash) { {} }
   let(:config) { described_class.new(config_path) }
 
-  around(:each) do |example|
+  around do |example|
     File.open(config_path, "w") { |file| file.write(YAML.dump(config_hash)) }
 
     begin
@@ -13,7 +13,7 @@ describe MacSetup::Configuration do
     end
   end
 
-  describe '#git_repos' do
+  describe "#git_repos" do
     context "no git_repos are included" do
       it "returns an empty hash" do
         expect(config.git_repos).to eq({})
@@ -36,7 +36,7 @@ describe MacSetup::Configuration do
     end
   end
 
-  describe '#symlinks' do
+  describe "#symlinks" do
     context "no symlinks are included" do
       it "returns an empty array" do
         expect(config.symlinks).to eq({})

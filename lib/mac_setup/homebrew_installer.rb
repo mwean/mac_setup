@@ -2,7 +2,7 @@ require_relative "shell"
 
 module MacSetup
   class HomebrewInstaller
-    BREW_INSTALL_URL = "https://raw.githubusercontent.com/Homebrew/install/master/install"
+    BREW_INSTALL_URL = "https://raw.githubusercontent.com/Homebrew/install/master/install".freeze
 
     def self.run
       if Shell.command_present?("brew")

@@ -6,7 +6,7 @@ module MacSetup
     InvalidConfigError = Class.new(StandardError)
     DEFAULT_KEYS = [
       :repo, :plugins, :git_repos, :symlinks, :taps, :brews, :fonts, :casks, :quicklook, :mas, :extra_dotfiles
-    ]
+    ].freeze
 
     def initialize(config_path)
       @config_path = config_path
@@ -99,11 +99,9 @@ module MacSetup
 
     def add_brews(item, existing_brews = brews)
       existing_brews.merge!(brew_value(item)) do |key, oldval, newval|
-        if oldval == newval
-          oldval
-        else
-          raise InvalidConfigError, "#{key} is defined twice!: #{oldval}, #{newval}"
-        end
+        raise InvalidConfigError, "#{key} is defined twice!: #{oldval}, #{newval}" unless oldval == newval
+
+        oldval
       end
     end
 

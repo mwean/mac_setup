@@ -13,7 +13,7 @@ when "install"
   # config_path = (ARGV - options)[0] || File.expand_path(DEFAULT_CONFIG_PATH)
 
   # if File.exist?(config_path)
-    MacSetup.install # (config_path, options)
+  MacSetup.install # (config_path, options)
   # else
   #   puts "You must specify a path to config file or create one at #{DEFAULT_CONFIG_PATH}"
   # end

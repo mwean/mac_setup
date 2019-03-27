@@ -4,7 +4,7 @@ describe MacSetup::SymlinkInstaller do
   let(:config) { empty_config }
   let(:options) { {} }
 
-  before(:each) do
+  before do
     @original_home = ENV["HOME"]
     ENV["HOME"] = home_path
     allow(MacSetup).to receive(:dotfiles_path).and_return(dotfiles_path)
@@ -13,7 +13,7 @@ describe MacSetup::SymlinkInstaller do
     FileUtils.mkdir_p(home_path)
   end
 
-  after(:each) do
+  after do
     FileUtils.rm_rf(dotfiles_path)
     FileUtils.rm_rf(home_path)
     ENV["HOME"] = @original_home
@@ -21,7 +21,7 @@ describe MacSetup::SymlinkInstaller do
 
   xdescribe ".run" do
     it "symlinks everything in the dotfiles directory" do
-      dotfiles = %w(dotfile1 dotfile2)
+      dotfiles = %w[dotfile1 dotfile2]
       dotfiles.each { |dotfile| FileUtils.touch(File.join(dotfiles_path, dotfile)) }
 
       run_installer

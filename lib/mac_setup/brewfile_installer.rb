@@ -3,7 +3,7 @@ require_relative "shell"
 
 module MacSetup
   class BrewfileInstaller
-    BUNDLE_TAP = "homebrew/bundle"
+    BUNDLE_TAP = "homebrew/bundle".freeze
 
     attr_reader :config, :status
 

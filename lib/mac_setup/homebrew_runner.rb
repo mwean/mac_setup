@@ -6,7 +6,7 @@ module MacSetup
       MacSetup.log("Installing Homebrew brews and casks") do
         Tempfile.create("Brewfile") do |brewfile|
           write_brewfile(config, brewfile)
-          File.chmod(0644, brewfile)
+          File.chmod(0o644, brewfile)
           brewfile.rewind
 
           Shell.raw("brew bundle install --file=#{brewfile.path}")

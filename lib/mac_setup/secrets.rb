@@ -1,9 +1,9 @@
 module MacSetup
   class Secrets
-    CRYPTO_LIB = "openssl"
-    CIPHER = "aes-256-cbc"
-    PLAINTEXT_EXT = "priv"
-    CIPHERTEXT_EXT = "crypt"
+    CRYPTO_LIB = "openssl".freeze
+    CIPHER = "aes-256-cbc".freeze
+    PLAINTEXT_EXT = "priv".freeze
+    CIPHERTEXT_EXT = "crypt".freeze
 
     attr_reader :files, :password
 
@@ -122,15 +122,15 @@ module MacSetup
     end
 
     def encrypt_command(file, target_path)
-      %W(openssl enc -aes-256-cbc -k testme -in #{file} -out #{target_path})
+      %W[openssl enc -aes-256-cbc -k testme -in #{file} -out #{target_path}]
     end
 
     def decrypt_command(file, target_path)
-      %W(openssl enc -aes-256-cbc -k testme -d -in #{file} -out #{target_path})
+      %W[openssl enc -aes-256-cbc -k testme -d -in #{file} -out #{target_path}]
     end
 
     def base_command(password)
-      %W(#{CRYPTO_LIB} enc -#{CIPHER} -k #{password})
+      %W[#{CRYPTO_LIB} enc -#{CIPHER} -k #{password}]
     end
 
     def raw_file_path(file)
