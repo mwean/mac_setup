@@ -4,7 +4,7 @@ describe MacSetup::GitRepoInstaller do
   before(:each) { config.git_repos = git_repos }
 
   context "repos are from github" do
-    let(:git_repos) { [{ "username/repo" => "some/install/path" }] }
+    let(:git_repos) { { "username/repo" => "some/install/path" } }
 
     it "installs the repo at the given path" do
       run_installer
@@ -16,7 +16,7 @@ describe MacSetup::GitRepoInstaller do
   end
 
   context "repos are full urls" do
-    let(:git_repos) { [{ "https://some-site.com/some-repo.git" => "some/install/path" }] }
+    let(:git_repos) { { "https://some-site.com/some-repo.git" => "some/install/path" } }
 
     it "installs the repo at the given path" do
       run_installer
@@ -29,7 +29,7 @@ describe MacSetup::GitRepoInstaller do
 
   context "repo already is installed" do
     let(:install_path) { Pathname.new("spec/sandbox/my-repo").expand_path }
-    let(:git_repos) { [{ "username/repo" => install_path.to_s }] }
+    let(:git_repos) { { "username/repo" => install_path.to_s } }
 
     before(:each) { install_path.mkpath }
     after(:each) { FileUtils.rmdir(install_path) }
@@ -37,7 +37,9 @@ describe MacSetup::GitRepoInstaller do
     it "updates the repo" do
       run_installer
 
-      update_command = /git pull && git submodule update --init --recursive/
+      fetch_command = /git fetch/
+      update_command = /git merge origin && git submodule update --init --recursive/
+      expect(fetch_command).to have_been_run.in_dir(install_path)
       expect(update_command).to have_been_run.in_dir(install_path)
     end
 

@@ -4,7 +4,7 @@ describe MacSetup::ScriptInstaller do
   let(:scripts_path) { sandbox_path.join(described_class::SCRIPTS_PATH) }
 
   before(:each) do
-    stub_const("MacSetup::DOTFILES_PATH", sandbox_path)
+    allow(MacSetup).to receive(:dotfiles_path).and_return(sandbox_path)
 
     scripts_path.mkpath
     scripts.each { |script| FileUtils.touch(scripts_path.join(script)) }
@@ -21,6 +21,6 @@ describe MacSetup::ScriptInstaller do
   end
 
   def run_installer
-    MacSetup::ScriptInstaller.run(empty_config, instance_double(MacSetup::SystemStatus))
+    quiet { MacSetup::ScriptInstaller.run(empty_config, instance_double(MacSetup::SystemStatus)) }
   end
 end

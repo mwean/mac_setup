@@ -1,51 +1,83 @@
+require "rspec/mocks"
+
 class FakeShell
-  def self.stub(pattern, options = {}, &block)
-    if block_given?
-      return_val = block
-    else
-      return_val = options[:with] || ""
+  extend RSpec::Mocks::ExampleMethods
+
+  class << self
+    def stub(pattern, options = {}, &block)
+      if block_given?
+        return_val = block
+      else
+        return_val = options[:with] || ""
+      end
+
+      @stubs.unshift(pattern: pattern, return_val: return_val)
     end
 
-    @stubs.unshift(pattern: pattern, return_val: return_val)
-  end
+    def result(*command)
+      run(*command).output
+    end
 
-  def self.run(command)
-    matching_stub = @stubs.find { |stub| command =~ stub[:pattern] }
-    @calls << { command: command, pwd: Dir.pwd }
+    def run(*command)
+      cmd = command.first
+      matching_stub = @stubs.find { |stub| cmd =~ stub[:pattern] }
+      @calls << { command: cmd, pwd: Dir.pwd }
 
-    return_value(matching_stub, command)
-  end
+      MacSetup::Result.new(return_value(matching_stub, cmd), "", instance_double(Process::Status, success?: true))
+    end
 
-  def self.called?(pattern)
-    !find_matching_call(pattern).nil?
-  end
+    def raw(command)
+      matching_stub = @stubs.find { |stub| command =~ stub[:pattern] }
+      @calls << { command: command, pwd: Dir.pwd }
+      nil
+    end
 
-  def self.reset!
-    @stubs = []
-    @calls = []
-  end
+    def success?(command)
+      run(command).success?
+    end
 
-  def self.return_value(matching_stub, command)
-    return "" unless matching_stub
+    def called?(pattern)
+      !find_matching_call(pattern).nil?
+    end
 
-    return_val = matching_stub[:return_val]
-    return_val.respond_to?(:call) ? return_val.call(command) : return_val.to_s
-  end
+    def command_present!(command)
+      @known_commands << command
+    end
 
-  def self.pwd(pattern)
-    find_matching_call(pattern)[:pwd]
-  end
+    def command_present?(command)
+      @known_commands.include?(command)
+    end
 
-  def self.find_matching_call(pattern)
-    matcher = case pattern
-              when String
-                ->(call) { call[:command] == pattern }
-              when Regexp
-                ->(call) { call[:command] =~ pattern }
-              else
-                raise "Invalid pattern type: #{pattern.class}"
-              end
+    def reset!
+      @stubs = []
+      @calls = []
+      @known_commands = []
+    end
 
-    @calls.find { |call| matcher[call] }
+    def pwd(pattern)
+      find_matching_call(pattern)[:pwd]
+    end
+
+    private
+
+    def return_value(matching_stub, command)
+      return "" unless matching_stub
+
+      return_val = matching_stub[:return_val]
+      return_val.respond_to?(:call) ? return_val.call(command) : return_val.to_s
+    end
+
+    def find_matching_call(pattern)
+      matcher = case pattern
+                when String
+                  ->(call) { call[:command] == pattern }
+                when Regexp
+                  ->(call) { call[:command] =~ pattern }
+                else
+                  raise "Invalid pattern type: #{pattern.class}"
+                end
+
+      @calls.find { |call| matcher[call] }
+    end
   end
 end
