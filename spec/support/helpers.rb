@@ -10,13 +10,16 @@ module Helpers
 
   def empty_config
     OpenStruct.new.tap do |config|
-      config.taps = []
-      config.formulas = []
+      config.plugins = []
       config.casks = []
-      config.launch_agents = []
-      config.git_repos = []
-      config.scripts = []
-      config.symlinks = []
+      config.git_repos = {}
+      config.symlinks = {}
+      config.brews = []
+      config.extra_dotfiles = []
+      config.fonts = []
+      config.quicklook = []
+      config.taps = []
+      config.mas = {}
     end
   end
 

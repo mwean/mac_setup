@@ -4,7 +4,8 @@ RSpec::Matchers.define :have_been_run do
   end
 
   failure_message do |expected|
-    %(expected "#{expected.source}" to have been run)
+    command = expected.respond_to?(:source) ? expected.source : expected.to_s
+    %(expected "#{command}" to have been run)
   end
 
   chain :in_dir do |path|

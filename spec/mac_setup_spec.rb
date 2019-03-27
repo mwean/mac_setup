@@ -1,27 +1,30 @@
 describe MacSetup do
+  let(:fake_config) { instance_double(MacSetup::Configuration, plugins: [], extra_dotfiles: []).as_null_object }
+
+  before { allow(MacSetup::Configuration).to receive(:new).and_return(fake_config) }
+
   describe ".bootstrap" do
     let(:dotfiles_repo) { "username/dotfiles" }
 
     before(:each) do
-      allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
-      allow(MacSetup::CommandLineToolsInstaller).to receive(:run)
-      allow(MacSetup::SymlinkInstaller).to receive(:install_dotfile)
       allow(MacSetup::HomebrewInstaller).to receive(:run)
+      allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
+
+      plugins = [
+        MacSetup::Plugins::MacAppStore,
+        MacSetup::Plugins::Keybase,
+        MacSetup::Plugins::Dotfiles,
+        MacSetup::Plugins::Asdf
+      ]
+
+      plugins.each { |plugin| allow(plugin).to receive(:bootstrap) }
 
       described_class.bootstrap(dotfiles_repo)
     end
 
     it "clones the dotfiles repo" do
-      expected_args = [dotfiles_repo, MacSetup::DOTFILES_PATH]
+      expected_args = [dotfiles_repo, MacSetup.dotfiles_path]
       expect(MacSetup::GitRepoInstaller).to have_received(:install_repo).with(*expected_args)
-    end
-
-    it "installs the command line tools" do
-      expect(MacSetup::CommandLineToolsInstaller).to have_received(:run)
-    end
-
-    it "installs the mac_setup dotfile symlinks" do
-      expect(MacSetup::SymlinkInstaller).to have_received(:install_dotfile).with("mac_setup")
     end
 
     it "installs homebrew" do
@@ -31,35 +34,38 @@ describe MacSetup do
 
   describe ".install" do
     let(:config_path) { "spec/support/config.yml" }
-    let(:options) { %w(option1 option2) }
-    let(:fake_config) { double(:fake_config) }
-    let(:fake_status) { double(:fake_status) }
+    let(:fake_status) { instance_double(MacSetup::SystemStatus) }
 
     before(:each) do
-      allow(MacSetup::Configuration).to receive(:new).and_return(fake_config)
       allow(MacSetup::SystemStatus).to receive(:new).and_return(fake_status)
+      allow(MacSetup::GitRepoInstaller).to receive(:install_repo)
+      allow(MacSetup::Plugins::Dotfiles).to receive(:add_requirements)
 
-      MacSetup::INSTALLERS.each do |installer|
+      (MacSetup::INSTALLERS + MacSetup::DEFAULT_PLUGINS).each do |installer|
         allow(installer).to receive(:run)
       end
 
-      described_class.install(config_path, options)
+      described_class.install
     end
 
-    it "builds a configuration object with the config path" do
+    xit "builds a configuration object with the config path" do
       expect(MacSetup::Configuration).to have_received(:new).with(File.expand_path(config_path))
     end
 
     expected_installers = [
-      MacSetup::SymlinkInstaller,
-      MacSetup::BrewfileInstaller,
-      MacSetup::ServicesInstaller,
       MacSetup::GitRepoInstaller,
-      MacSetup::ScriptInstaller
+      MacSetup::SymlinkInstaller,
+      MacSetup::HomebrewRunner,
+      MacSetup::ScriptInstaller,
+      MacSetup::DefaultsInstaller,
+      MacSetup::Plugins::MacAppStore,
+      MacSetup::Plugins::Keybase,
+      MacSetup::Plugins::Dotfiles,
+      MacSetup::Plugins::Asdf
     ]
 
-    expected_installers.each do |installer|
-      it "runs the #{installer}" do
+    it "runs the installers" do
+      expected_installers.each do |installer|
         expect(installer).to have_received(:run).with(fake_config, fake_status)
       end
     end
