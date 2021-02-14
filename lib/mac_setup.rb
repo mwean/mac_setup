@@ -7,6 +7,7 @@ require "mac_setup/result"
 require "mac_setup/shell"
 require "mac_setup/homebrew_runner"
 require "mac_setup/secrets"
+require "mac_setup/command_line_tools_installer"
 require "mac_setup/homebrew_installer"
 require "mac_setup/git_repo_installer"
 require "mac_setup/symlink_path_builder"
@@ -33,13 +34,13 @@ module MacSetup
 
   DEFAULT_PLUGINS = [
     Plugins::MacAppStore,
-    Plugins::Keybase,
     Plugins::Dotfiles,
     Plugins::Asdf
   ].freeze
 
   class << self
     def bootstrap(dotfiles_repo)
+      CommandLineToolsInstaller.run
       HomebrewInstaller.run
       GitRepoInstaller.install_repo(dotfiles_repo, dotfiles_path)
 

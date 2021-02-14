@@ -19,7 +19,7 @@ module MacSetup
     end
 
     def self.install_cask(cask)
-      Shell.run("brew cask install #{cask}")
+      Shell.run("brew install --cask #{cask}")
     end
 
     def self.write_brewfile(config, brewfile)
